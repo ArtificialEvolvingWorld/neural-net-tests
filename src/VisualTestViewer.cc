@@ -14,7 +14,7 @@
 
 VisualTestViewer::VisualTestViewer(int width, int height) {
   receiver = std::make_unique<EventReceiver>();
-  device = createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(640,480), 16,
+  device = createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height), 16,
                         false, true, false, receiver.get());
 
   if(!device) {
@@ -26,19 +26,11 @@ VisualTestViewer::VisualTestViewer(int width, int height) {
   smgr = device->getSceneManager();
   device->setWindowCaption(L"Neural Net Tests");
 
-  initialize_camera();
   initialize_objects();
 }
 
 VisualTestViewer::~VisualTestViewer() {
   device->drop();
-}
-
-void VisualTestViewer::initialize_camera() {
-  camera = std::make_unique<PanningCamera>(device);
-  camera->setPosition({0,-10,0});
-  camera->setTarget({0,0,0});
-  camera->setSkyVector({0,0,1});
 }
 
 void VisualTestViewer::initialize_objects() {
@@ -48,13 +40,6 @@ void VisualTestViewer::initialize_objects() {
   // Add the FPS counter
   fps_text = guienv->addStaticText(L"",
                                    irr::core::rect<irr::s32>(10,10,260,22), true);
-}
-
-void VisualTestViewer::update_camera(double dT) {
-  double camera_movement_speed = 5.0;
-  if(device->isWindowActive()) {
-    camera->Apply(camera_movement_speed * dT);
-  }
 }
 
 void VisualTestViewer::update_fps() {
@@ -81,10 +66,8 @@ void VisualTestViewer::Run() {
     }
     prev_time = now;
 
-    update_camera(dT);
-
     for(auto& entity : entities) {
-      entity->update(dT);
+      entity->update(dT, *receiver);
     }
 
     // // Adjust force based on the controls

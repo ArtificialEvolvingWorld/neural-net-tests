@@ -35,7 +35,7 @@ public:
   void Run();
 
 private:
-  void initialize_camera();
+  //void initialize_camera();
   void initialize_objects();
   void update_camera(double dT);
   void update_fps();
@@ -48,7 +48,7 @@ private:
 
   std::vector<std::unique_ptr<Entity> > entities;
 
-  std::unique_ptr<PanningCamera> camera;
+  //std::unique_ptr<PanningCamera> camera;
 
   irr::gui::IGUIStaticText* fps_text;
 };

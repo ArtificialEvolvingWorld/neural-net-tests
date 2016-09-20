@@ -13,7 +13,7 @@ public:
   ~DoublePendulumEntity();
 
   virtual void initialize(irr::IrrlichtDevice* device);
-  virtual void update(double deltaT);
+  virtual void update(double deltaT, const EventReceiver& events);
   void set_position(irr::core::vector3df pos);
 
 private:

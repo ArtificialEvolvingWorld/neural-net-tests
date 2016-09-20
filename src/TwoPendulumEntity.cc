@@ -62,7 +62,7 @@ void TwoPendulumEntity::initialize(irr::IrrlichtDevice* device) {
   rod2->addShadowVolumeSceneNode();
 }
 
-void TwoPendulumEntity::update(double deltaT) {
+void TwoPendulumEntity::update(double deltaT, const EventReceiver& /*events*/) {
   rk.Step();
   TwoPendulum& current = rk.GetCurrent();
 
