@@ -18,15 +18,19 @@ public:
   virtual void initialize(irr::IrrlichtDevice* device);
   virtual void update(double deltaT, const EventReceiver& events);
 
-  void SetMode(CameraType type) {
-    this->type = type;
-  }
+  CameraType GetMode() const { return type; }
+  void SetMode(CameraType type) { this->type = type; }
 
-  void SetPosition(irr::core::vector3df pos) {
-    position = pos;
-  }
+  irr::core::vector3df GetPosition() const { return position; }
+  void SetPosition(irr::core::vector3df pos) { position = pos; }
 
   void SetLookAt(irr::core::vector3df look_at);
+
+  double GetTurnSpeed() const { return turn_speed; }
+  void SetTurnSpeed(double speed) { turn_speed = speed; }
+
+  double GetMovementSpeed() const { return movement_speed; }
+  void SetMovementSpeed(double speed) { movement_speed = speed; }
 
 private:
   void InitCameraOrtho();

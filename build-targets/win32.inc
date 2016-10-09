@@ -1,8 +1,8 @@
 BUILD_SHARED = 0
 BUILD_STATIC = 1
 
-CC = i686-w64-mingw32-gcc
-CXX = i686-w64-mingw32-g++
+CC = i686-w64-mingw32-gcc-posix
+CXX = i686-w64-mingw32-g++-posix
 AR = i686-w64-mingw32-ar
 
 LDFLAGS += -s

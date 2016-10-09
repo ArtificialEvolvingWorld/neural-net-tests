@@ -5,10 +5,14 @@
 
 #include "EventReceiver.hh"
 
+namespace {
+  static const double pi = 3.14159265358979323846;
+}
+
 CameraEntity::CameraEntity()
   : device(nullptr), camera(nullptr),
     sky_vector(0,0,1),
-    theta(M_PI/2), phi(0), type(PinToSurface),
+    theta(pi/2), phi(0), type(PinToSurface),
     turn_speed(0.1), movement_speed(1.0) { }
 
 CameraEntity::~CameraEntity() {
@@ -37,9 +41,9 @@ void CameraEntity::update(double deltaT, const EventReceiver& events) {
   // Re-center the mouse
   device->getCursorControl()->setPosition(0.5f, 0.5f);
 
-  theta += disp.Y * turn_speed * (M_PI/180);
-  theta = std::max(0.0, std::min(theta, M_PI)); // Clamp to range of 0 to pi
-  phi -= disp.X * turn_speed * (M_PI/180);
+  theta += disp.Y * turn_speed * (pi/180);
+  theta = std::max(0.0, std::min(theta, pi)); // Clamp to range of 0 to pi
+  phi -= disp.X * turn_speed * (pi/180);
 
   auto forward = GetForward();
   auto right = GetRight();

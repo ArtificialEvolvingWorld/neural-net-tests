@@ -3,7 +3,7 @@
 ALL_CPPFLAGS += -DIRRLICHT_EXPORTS=1
 ALL_CPPFLAGS += -DPNG_THREAD_UNSAFE_OK -DPNG_NO_MMX_CODE -DPNG_NO_MNG_FEATURES
 
-LIBRARY_INC_DIRS = include source/Irrlicht/zlib source/Irrlicht/jpeglib source/Irrlicht/libpng
+LIBRARY_INCLUDE_DIRS = include source/Irrlicht/zlib source/Irrlicht/jpeglib source/Irrlicht/libpng
 LIBRARY_SRC_DIRS = source/Irrlicht source/Irrlicht/lzma source/Irrlicht/zlib source/Irrlicht/jpeglib source/Irrlicht/libpng source/Irrlicht/aesGladman source/Irrlicht/bzip2
 
 ifeq ($(LINK_AGAINST_STATIC),1)
