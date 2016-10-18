@@ -5,6 +5,8 @@
 #include "DoublePendulumEntity.hh"
 #include "TwoPendulum.hh"
 #include "TwoPendulumEntity.hh"
+#include "SinglePendulum.hh"
+#include "SinglePendulumEntity.hh"
 #include "CameraEntity.hh"
 
 int main(){
@@ -43,6 +45,17 @@ int main(){
 
     auto entity = std::make_unique<TwoPendulumEntity>(initial);
     entity->set_position({+10, i*3, 0});
+
+    viewer.AddObject(std::move(entity));
+  }
+
+  for(int i=0; i<101; i++) {
+    SinglePendulum initial;
+    initial.length = 2;
+    initial.theta = ((100-i)/100.0)*(3.1415926/180);
+
+    auto entity = std::make_unique<SinglePendulumEntity>(initial);
+    entity->set_position({+30, i*3, 0});
 
     viewer.AddObject(std::move(entity));
   }
