@@ -41,7 +41,7 @@ INC_DIRECTORIES = include Entendre/include
 # A list of directories that contain libraries.  The list can also
 # contain patterns that expand to directories that contain libraries.
 # Each library is ex
-LIB_DIRECTORIES = lib?* Entendre/libNeat
+LIB_DIRECTORIES = lib?* Entendre/libNeat Entendre/libpyneat
 
 # If BUILD_SHARED is non-zero, shared libraries will be generated.  If
 # BUILD_SHARED is greater than BUILD_STATIC, executables will be
