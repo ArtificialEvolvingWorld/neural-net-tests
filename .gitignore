@@ -3,3 +3,6 @@ bin
 lib
 *~
 .build-target
+__pycache__
+*.pyc
+.sconsign.dblite

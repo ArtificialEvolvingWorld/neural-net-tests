@@ -35,11 +35,11 @@ int main() {
   //   .AddConnection(2,3,true,1.);
 
   auto prob = std::make_shared<Probabilities>();
-  prob->genetic_c1 = 4.0;
-  prob->genetic_c2 = 2.0;
+  prob->genetic_distance_structural = 4.0;
+  prob->genetic_distance_weights = 2.0;
   prob->culling_ratio = 0.2;
 
-  auto rand = std::make_shared<Uniform>(0,1);
+  auto rand = std::make_shared<RNG_MersenneTwister>();
 
   Population pop(seed, rand, prob);
 
