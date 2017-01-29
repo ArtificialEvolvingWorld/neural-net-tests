@@ -108,11 +108,11 @@ QGroupBox::title {
      </widget>
     </item>
     <item row="1" column="1" colspan="2">
-     <widget class="QGroupBox" name="groupBox_3">
+     <widget class="QGroupBox" name="info_box">
       <property name="title">
        <string/>
       </property>
-      <widget class="QWidget" name="horizontalLayoutWidget">
+      <widget class="QWidget" name="verticalLayoutWidget_2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -121,11 +121,7 @@ QGroupBox::title {
          <height>251</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="info_layout">
-        <item>
-         <widget class="QListWidget" name="listWidget"/>
-        </item>
-       </layout>
+       <layout class="QVBoxLayout" name="info_layout"/>
       </widget>
      </widget>
     </item>

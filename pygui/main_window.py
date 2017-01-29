@@ -1,6 +1,7 @@
 import os
 from PyQt4 import uic, QtCore
 from PyQt4.QtGui import *
+import numpy as np
 import itertools
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__),'../lib'))
@@ -21,6 +22,10 @@ class MainWindow(QMainWindow):
         self.ui.advance_n_gen.clicked.connect(self.advance_n_gen)
         self.ui.mutation_rate.valueChanged.connect(self.mutation_rate_changed)
 
+        # set up info box
+        self.info_stack = QStackedWidget()
+        self.ui.info_layout.addWidget(self.info_stack)
+
         # set up data model
         standard_model = QStandardItemModel()
         self.generation_parent = QStandardItem("Generations")
@@ -37,17 +42,37 @@ class MainWindow(QMainWindow):
         self.generations = [pyneat.Population(self.seed, self.rng, self.prob)]
 
 
+        # rig tree view selection model callbacks
+        QtCore.QObject.connect(self.ui.tree_view.selectionModel(),QtCore.SIGNAL('selectionChanged(QItemSelection,QItemSelection)'),self.tree_selection)
+
+
+    @QtCore.pyqtSlot('QItemSelection, QItemSelection')
+    def tree_selection(self, selected, deselected):
+        """ The callback made when the selectionChanged
+        signal is emitted from the tree_view class."""
+
+        info_list = QListWidget()
+        item = QListWidgetItem("Number of species = {}".format(int(np.random.uniform(0,100))))
+        info_list.addItem(item)
+        widget_index = self.info_stack.count()
+        self.info_stack.addWidget(info_list)
+        self.info_stack.setCurrentIndex(widget_index)
+        #print(selected)
+
+
     def advance_one_gen(self):
         self.generations.append(self.generations[-1].Reproduce(xor))
         item = QStandardItem("Gen. {}".format(len(self.generations)-1))
         self.generation_parent.appendRow(item)
 
     def advance_ten_gen(self):
-        print('Advance ten generation')
+        for i in range(0,10):
+            self.advance_one_gen()
 
     def advance_n_gen(self):
         n = self.ui.num_gens.value()
-        print('Advance {} generation'.format(n))
+        for i in range(0,n):
+            self.advance_one_gen()
 
     def mutation_rate_changed(self,value):
         print('Mutation rate changed to {}'.format(value))
