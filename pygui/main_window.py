@@ -4,8 +4,6 @@ from PyQt4.QtGui import *
 import numpy as np
 import itertools
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__),'.'))
-from pyneat_items import *
 sys.path.append(os.path.join(os.path.dirname(__file__),'../lib'))
 import pyneat
 
