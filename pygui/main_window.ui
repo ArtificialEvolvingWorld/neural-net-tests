@@ -90,42 +90,30 @@ QGroupBox::title {
       <property name="title">
        <string/>
       </property>
-      <widget class="QWidget" name="verticalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>201</width>
-         <height>251</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="tree_layout">
-        <item>
-         <widget class="QTreeView" name="tree_view"/>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QTreeView" name="tree_view"/>
+       </item>
+      </layout>
      </widget>
     </item>
     <item row="1" column="1" colspan="2">
      <widget class="QGroupBox" name="info_box">
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="title">
        <string/>
       </property>
-      <widget class="QWidget" name="verticalLayoutWidget_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>401</width>
-         <height>251</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="info_layout"/>
-      </widget>
      </widget>
     </item>
    </layout>
+   <zorder>groupBox_2</zorder>
+   <zorder>groupBox</zorder>
+   <zorder>info_box</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -133,7 +121,7 @@ QGroupBox::title {
      <x>0</x>
      <y>0</y>
      <width>627</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
