@@ -1,3 +1,6 @@
 [submodule "Entendre"]
 	path = Entendre
 	url = https://github.com/ArtificialEvolvingWorld/Entendre
+[submodule "graph_display"]
+	path = graph_display
+	url = https://github.com/Lunderberg/graph_display
