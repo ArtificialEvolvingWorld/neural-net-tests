@@ -63,6 +63,16 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QFrame" name="plot_holder">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
