@@ -3,12 +3,14 @@
 #include "XorFitness.hh"
 
 #include "pybind11/pybind11.h"
-#include "pybind11/functional.h"
 
 namespace py = pybind11;
 
 PYBIND11_PLUGIN(TestCases) {
   py::module m("TestCases", "Description");
+
+  py::module::import("pyneat");
+  typedef std::function<double(NeuralNet&)> FitnessFunc;
 
   py::class_<SinglePendulum>(m, "SinglePendulum")
     .def(py::init<>())
@@ -34,7 +36,8 @@ PYBIND11_PLUGIN(TestCases) {
                 "the pole to be considered balanced.")
   );
 
-  m.def("xor_fitness_func", xor_fitness_func);
+  auto xor_fitness_obj = py::cast<FitnessFunc>(xor_fitness_func());
+  m.add_object("xor_fitness", xor_fitness_obj);
 
   return m.ptr();
 }

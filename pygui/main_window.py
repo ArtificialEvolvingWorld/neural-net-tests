@@ -7,6 +7,7 @@ from PyQt4 import uic, QtCore, QtGui
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'../lib'))
 import pyneat
+import TestCases
 
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
@@ -49,7 +50,7 @@ class MainWindow(QMainWindow):
         self.seed = pyneat.Genome.ConnectedSeed(2,1)
         self.rng = pyneat.RNG_MersenneTwister(1)
         self.prob.new_connection_is_recurrent = 0
-        self.fitness_func = xor
+        self.fitness_func = TestCases.xor_fitness
         self.generations = [pyneat.Population(self.seed, self.rng, self.prob)]
         self.generations[-1].Evaluate(self.fitness_func)
         self.add_to_treeview(self.generations[-1], 0)
@@ -122,14 +123,3 @@ class MainWindow(QMainWindow):
 
     def mutation_rate_changed(self,value):
         print('Mutation rate changed to {}'.format(value))
-
-def xor(net):
-    if net.num_connections == 0:
-        return 0.0
-
-    error = 0.0
-    for i1,i2 in itertools.product([0,1],[0,1]):
-        correct = i1 ^ i2
-        val = net.evaluate([i1,i2])[0]
-        error += pow(val-correct, 2)
-    return pow(4.0 - error, 2)
