@@ -22,6 +22,32 @@ diagnostic_types = {pyneat.Population:PopulationDiagnostics,
                     pyneat.Organism:OrganismDiagnostics,
                     }
 
+prob_spinboxes = ['population_size',
+                  'min_size_for_champion',
+                  'culling_ratio',
+                  'stale_species_num_generations',
+                  'stale_species_penalty',
+                  'matching_gene_choose_mother',
+                  'keep_non_matching_mother_gene',
+                  'keep_non_matching_father_gene',
+                  'mutation_prob_adjust_weights',
+                  'weight_mutation_is_severe',
+                  'weight_mutation_small_adjust',
+                  'weight_mutation_reset_range',
+                  'mutation_prob_add_connection',
+                  'new_connection_is_recurrent',
+                  'mutation_prob_add_node',
+                  'mutation_prob_reenable_connection',
+                  'mutation_prob_toggle_connection',
+                  'genetic_distance_structural',
+                  'genetic_distance_weights',
+                  'genetic_distance_species_threshold',
+]
+
+prob_checkboxes = ['keep_empty_species',
+                   'species_representative_from_previous_gen',
+]
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -32,7 +58,6 @@ class MainWindow(QMainWindow):
         self.ui.advance_one_gen.clicked.connect(self.advance_one_gen)
         self.ui.advance_ten_gen.clicked.connect(self.advance_ten_gen)
         self.ui.advance_n_gen.clicked.connect(self.advance_n_gen)
-        self.ui.mutation_rate.valueChanged.connect(self.mutation_rate_changed)
 
         # set up data model
         self.standard_model = QtGui.QStandardItemModel()
@@ -55,6 +80,8 @@ class MainWindow(QMainWindow):
         self.generations[-1].Evaluate(self.fitness_func)
         self.add_to_treeview(self.generations[-1], 0)
 
+        self._load_probabilities_from_cpp()
+        self._setup_probabilities_callbacks()
 
         # rig tree view selection model callbacks
         QtCore.QObject.connect(self.ui.tree_view.selectionModel(),QtCore.SIGNAL('selectionChanged(QItemSelection,QItemSelection)'),self.tree_selection)
@@ -121,5 +148,31 @@ class MainWindow(QMainWindow):
 
         self.standard_model.appendRow(gen_item)
 
-    def mutation_rate_changed(self,value):
-        print('Mutation rate changed to {}'.format(value))
+    def _load_probabilities_from_cpp(self):
+        for name in prob_spinboxes:
+            spinbox = getattr(self.ui,name)
+            spinbox.setValue(getattr(self.prob,name))
+
+        for name in prob_checkboxes:
+            checkbox = getattr(self.ui,name)
+            checkbox.setChecked(getattr(self.prob,name))
+
+
+    def _setup_probabilities_callbacks(self):
+        for name in prob_spinboxes:
+            spinbox = getattr(self.ui,name)
+            spinbox.valueChanged.connect(self._load_probabilities_to_cpp)
+
+        for name in prob_checkboxes:
+            checkbox = getattr(self.ui,name)
+            checkbox.clicked.connect(self._load_probabilities_to_cpp)
+
+
+    def _load_probabilities_to_cpp(self):
+        for name in prob_spinboxes:
+            spinbox = getattr(self.ui,name)
+            setattr(self.prob, name, spinbox.value())
+
+        for name in prob_checkboxes:
+            checkbox = getattr(self.ui,name)
+            setattr(self.prob, name, bool(checkbox.checkState()))
