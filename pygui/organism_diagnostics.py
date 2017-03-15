@@ -3,14 +3,9 @@ import sys
 
 from PyQt4 import uic, QtCore, QtGui
 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-
 (Ui_Widget, QWidget) = uic.loadUiType(
     os.path.join(os.path.dirname(__file__),'organism_diagnostics.ui'))
 
-from pygui.util import fill_placeholder
 import pyneat
 
 # TODO: Cleaner way to import from graph_display
@@ -35,15 +30,8 @@ class OrganismDiagnostics(QWidget):
         self.ui.adj_fitness.setText(str(self.organism.adj_fitness))
 
     def setup_figure(self):
-        bg = self.palette().window().color()
-        color = (bg.redF(), bg.greenF(), bg.blueF())
-        self.figure = plt.figure(edgecolor=color, facecolor=color)
-        self.canvas = FigureCanvas(self.figure)
-        toolbar = NavigationToolbar(self.canvas, self)
-        toolbar.pan()
-        toolbar.hide()
-
-        fill_placeholder(self.ui.plot_holder, self.canvas)
+        self.figure = self.ui.matplotlibCanvas.figure
+        self.canvas = self.ui.matplotlibCanvas.canvas
 
     def make_plot(self):
         net = self.organism.network

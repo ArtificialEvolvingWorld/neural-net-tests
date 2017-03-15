@@ -2,14 +2,8 @@ import os
 
 from PyQt4 import uic, QtCore, QtGui
 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-
 (Ui_Widget, QWidget) = uic.loadUiType(
     os.path.join(os.path.dirname(__file__),'species_diagnostics.ui'))
-
-from pygui.util import fill_placeholder
 
 
 class SpeciesDiagnostics(QWidget):
@@ -30,15 +24,8 @@ class SpeciesDiagnostics(QWidget):
         self.ui.age.setText(str(self.species.age))
 
     def setup_figure(self):
-        bg = self.palette().window().color()
-        color = (bg.redF(), bg.greenF(), bg.blueF())
-        self.figure = plt.figure(edgecolor=color, facecolor=color)
-        self.canvas = FigureCanvas(self.figure)
-        toolbar = NavigationToolbar(self.canvas, self)
-        toolbar.pan()
-        toolbar.hide()
-
-        fill_placeholder(self.ui.plot_holder, self.canvas)
+        self.figure = self.ui.matplotlibCanvas.figure
+        self.canvas = self.ui.matplotlibCanvas.canvas
 
     def make_plot(self):
         self.figure.clear()

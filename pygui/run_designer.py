@@ -13,7 +13,7 @@ def append_path(varname, new_path):
 
 base = os.path.dirname(__file__)
 append_path('PYQTDESIGNERPATH',
-            os.path.join(base, '..', 'designer-qt4_plugins'))
+            os.path.join(base, 'designer-qt4_plugins'))
 append_path('PYTHONPATH',
             os.path.join(base, '..'))
 

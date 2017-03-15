@@ -64,17 +64,24 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="QFrame" name="plot_holder">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+    <widget class="MatplotlibCanvas" name="matplotlibCanvas">
+     <property name="toolTip">
+      <string>Python console</string>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+     <property name="whatsThis">
+      <string/>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MatplotlibCanvas</class>
+   <extends>QWidget</extends>
+   <header>pygui.custom_widgets.matplotlib_canvas</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
