@@ -25,9 +25,13 @@ class SpeciesDiagnostics(QWidget):
 
     def load_values(self):
         num_organisms = len(self.species.organisms)
+        current_best = max(org.fitness for org in self.species.organisms)
+        total_adj_fitness = sum(org.adj_fitness for org in self.species.organisms)
         self.ui.num_organisms.setText(str(num_organisms))
-        self.ui.best_fitness.setText(str(self.species.best_fitness))
+        self.ui.best_historical_fitness.setText(str(self.species.best_fitness))
         self.ui.age.setText(str(self.species.age))
+        self.ui.best_fitness.setText(str(current_best))
+        self.ui.adj_fitness.setText(str(total_adj_fitness))
 
     def setup_figure(self):
         bg = self.palette().window().color()

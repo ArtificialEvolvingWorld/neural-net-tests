@@ -8,6 +8,7 @@ from PyQt4 import uic, QtCore, QtGui
 sys.path.append(os.path.join(os.path.dirname(__file__),'../lib'))
 import pyneat
 import TestCases
+import IPython
 
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
@@ -72,10 +73,41 @@ class MainWindow(QMainWindow):
 
         # initialize pyneat neat_xor example
         self.prob = pyneat.Probabilities()
-        self.seed = pyneat.Genome.ConnectedSeed(2,1)
-        self.rng = pyneat.RNG_MersenneTwister(1)
+        self.seed = pyneat.Genome.ConnectedSeed(1,1)
+        self.rng = pyneat.RNG_MersenneTwister()
+        #self.prob.population_size = 1000
         self.prob.new_connection_is_recurrent = 0
-        self.fitness_func = TestCases.xor_fitness
+        self.prob.use_compositional_pattern_producing_networks = True
+        self.prob.mutation_prob_toggle_connection = 0.005
+
+        self.prob.genetic_distance_species_threshold = 3.0
+        self.prob.weight_mutation_small_adjust = 0.01
+        self.prob.genetic_distance_structural = 3
+        #self.prob.genetic_distance_weights = 0.4
+        self.prob.mutation_prob_add_connection = 0.01
+        self.prob.mutation_prob_add_node = 0.006
+
+
+
+        #self.prob.keep_empty_species = True
+        #self.prob.stale_species_penalty = 1.0
+        #self.prob.stale_species_num_generations = 100
+
+        #data = [0.0,1.1,2.4,3.9,4.2,5.0,6.5]
+        #label = [x*x for x in data]
+
+        #data = np.arange(0,np.pi,0.2)
+        #label = np.sin(data)
+
+        data = [1.0,1.5,2.0,2.5,3.0,3.5,4,5,6,7,8]
+        label = [1,1.2,1.4,1.38,1.2,2,5,8,10,10.5,11]
+
+
+
+        TestCases.regression_1d_data = data
+        TestCases.regression_1d_label = label
+
+        self.fitness_func = TestCases.regression_1d_fitness(data,label)
         self.generations = [pyneat.Population(self.seed, self.rng, self.prob)]
         self.generations[-1].Evaluate(self.fitness_func)
         self.add_to_treeview(self.generations[-1], 0)

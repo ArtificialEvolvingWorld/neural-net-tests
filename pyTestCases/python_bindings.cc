@@ -1,8 +1,10 @@
 #include "SinglePendulum.hh"
 #include "SinglePendulumFitness.hh"
 #include "XorFitness.hh"
+#include "Regression1D.hh"
 
 #include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 namespace py = pybind11;
 
@@ -38,6 +40,14 @@ PYBIND11_PLUGIN(TestCases) {
 
   auto xor_fitness_obj = py::cast<FitnessFunc>(xor_fitness_func());
   m.add_object("xor_fitness", xor_fitness_obj);
+
+  // auto regression_1d_fitness_obj = py::cast<FitnessFunc>(regression_1d_fitness_func());
+  // m.add_object("regression_1d_fitness", regression_1d_fitness_obj);
+
+  m.def("regression_1d_fitness", regression_1d_fitness_func,
+        py::arg("data") = std::vector<float>({0.0,1.1,2.4,3.9,4.2,5.0,6.5}),
+        py::arg("label") = std::vector<float>({0.0,1.1,2.4,3.9,4.2,5.0,6.5})
+  );
 
   return m.ptr();
 }

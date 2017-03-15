@@ -50,17 +50,28 @@ class OrganismDiagnostics(QWidget):
         g = graph.Graph()
 
         for i,node_type in enumerate(net.node_types):
-            color = {pyneat.NodeType.Input: 'green',
-                     pyneat.NodeType.Bias: 'gray',
-                     pyneat.NodeType.Hidden: 'blue',
-                     pyneat.NodeType.Output: 'red',
-            }[node_type]
-
-            fixed_y = {pyneat.NodeType.Input: 0,
-                       pyneat.NodeType.Bias: 0,
-                       pyneat.NodeType.Hidden: None,
-                       pyneat.NodeType.Output: 1,
-            }[node_type]
+            color = {pyneat.NodeType.Input:        '#2124FF',
+                     pyneat.NodeType.Bias:         '#1F22C1',
+                     pyneat.NodeType.Output:       '#FF2718',
+                     pyneat.NodeType.Sigmoid:      '#EE8A2A',
+                     pyneat.NodeType.Tanh:         '#B17516',
+                     pyneat.NodeType.Relu:         '#B1B0AA',
+                     pyneat.NodeType.Gaussian:     '#2CB11F',
+                     pyneat.NodeType.Sin:          '#F6DE39',
+                     pyneat.NodeType.Cos:          '#C5B12C',
+                     pyneat.NodeType.Abs:          '#E685E7',
+                     pyneat.NodeType.Mult:         '#257580',
+                     pyneat.NodeType.Add:          '#68C6D3',
+                     pyneat.NodeType.MultGaussian: '#3E8727',
+                     pyneat.NodeType.Square:       '#F050E6'
+                 }[node_type]
+            try:
+                fixed_y = {pyneat.NodeType.Input: 0,
+                           pyneat.NodeType.Bias: 0,
+                           pyneat.NodeType.Output: 1,
+                       }[node_type]
+            except:
+                fixed_y = None
 
             g.add_node(i, color=color)
             if fixed_y is not None:
