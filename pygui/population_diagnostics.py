@@ -84,12 +84,12 @@ class PopulationDiagnostics(QWidget):
                 #    best_in_spec = org
                 if org.fitness == best_fitness:
                     best_net = org.network
-                else:
-                    net = org.network
-                    results = []
-                    for x in domain:
-                        results.append(net.evaluate([x])[0])
-                    axes.plot(domain,results,color='#eeeeee', linestyle='-')
+                # else:
+                #     net = org.network
+                #     results = []
+                #     for x in domain:
+                #         results.append(net.evaluate([x])[0])
+                #     axes.plot(domain,results,color='#eeeeee', linestyle='-')
         results = []
         for x in domain:
             results.append(best_net.evaluate([x])[0])
