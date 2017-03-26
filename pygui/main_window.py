@@ -6,15 +6,12 @@ import sys
 import numpy as np
 from PyQt4 import uic, QtCore, QtGui
 
-sys.path.append(os.path.join(os.path.dirname(__file__),'../lib'))
 import pyneat
 import TestCases
 
-from pygui.population_diagnostics import PopulationDiagnostics
-from pygui.species_diagnostics import SpeciesDiagnostics
-from pygui.organism_diagnostics import OrganismDiagnostics
-from pygui.util import fill_placeholder
-from pygui.single_pendulum_opts import SinglePendulumOptions
+from pygui import (PopulationDiagnostics, SpeciesDiagnostics, OrganismDiagnostics,
+                   SinglePendulumOptions,
+                   fill_placeholder)
 
 
 diagnostic_types = {pyneat.Population:PopulationDiagnostics,
