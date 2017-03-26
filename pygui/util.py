@@ -11,4 +11,5 @@ def fill_placeholder(placeholder, widget):
         layout.removeWidget(widget_to_delete)
         widget_to_delete.close()
 
-    layout.addWidget(widget)
+    if widget is not None:
+        layout.addWidget(widget)

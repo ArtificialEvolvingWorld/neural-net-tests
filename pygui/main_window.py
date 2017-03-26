@@ -11,6 +11,7 @@ import TestCases
 
 from pygui import (PopulationDiagnostics, SpeciesDiagnostics, OrganismDiagnostics,
                    SinglePendulumOptions,
+                   XorDiagnostics,
                    fill_placeholder)
 
 
@@ -25,7 +26,7 @@ FunctionConfig = namedtuple(
 
 fitness_functions = [
     FunctionConfig('xor',
-                   TestCases.xor_fitness_func, 2, 1, None, None),
+                   TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics),
 
     FunctionConfig('Single Pendulum, With Velocity',
                    TestCases.single_pendulum_fitness_func, 2, 1, SinglePendulumOptions, None),
@@ -69,6 +70,7 @@ class MainWindow(QMainWindow):
 
         self._set_up_fitness_func_dropdown()
         self.options_widget = None
+        self.diagnostics_widget = None
 
         # set up callbacks
         self.ui.advance_one_gen.clicked.connect(self.advance_one_gen)
@@ -121,6 +123,26 @@ class MainWindow(QMainWindow):
             widget_type = diagnostic_types[type(obj)]
             fill_placeholder(self.ui.info_box, widget_type(obj, self))
 
+        if self.diagnostics_widget is not None:
+            best_selected = self.get_best_of_selected(obj)
+            self.diagnostics_widget.update(best_selected)
+
+    def get_best_of_selected(self, obj):
+        if isinstance(obj, pyneat.Population):
+            return max((org for spec in obj.species for org in spec.organisms),
+                       key=lambda org:org.fitness)
+
+        elif isinstance(obj, pyneat.Species):
+            return max((org for org in obj.organisms),
+                       key=lambda org:org.fitness)
+
+        elif isinstance(obj, pyneat.Organism):
+            return obj
+
+        else:
+            return None
+
+
     def add_next_generation(self, gen):
         fitness_func = self.fitness_func_generator( **self.fitness_func_args() )
         gen.Evaluate(fitness_func)
@@ -152,13 +174,21 @@ class MainWindow(QMainWindow):
         self.prob.new_connection_is_recurrent = 0
         self.fitness_func_generator = config.generator
 
+        if self.diagnostics_widget is not None:
+            fill_placeholder(self.ui.custom_info_box, None)
+            self.diagnostics_widget = None
+
+        if config.diagnostics_widget is not None:
+            self.diagnostics_widget = config.diagnostics_widget(self)
+            fill_placeholder(self.ui.custom_info_box, self.diagnostics_widget)
+
+
         if self.options_widget is not None:
             index = self.ui.coltabwidget.indexOf(self.options_widget)
             self.ui.coltabwidget.removeTab(index)
-
-        if config.options_widget is None:
             self.options_widget = None
-        else:
+
+        if config.options_widget is not None:
             self.options_widget = config.options_widget(self)
             self.ui.coltabwidget.addTab(self.options_widget, config.name)
 
