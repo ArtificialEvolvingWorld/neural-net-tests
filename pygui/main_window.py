@@ -1,3 +1,4 @@
+from collections import namedtuple, OrderedDict
 import itertools
 import os
 import sys
@@ -13,14 +14,26 @@ from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
 from pygui.organism_diagnostics import OrganismDiagnostics
 from pygui.util import fill_placeholder
+from pygui.single_pendulum_opts import SinglePendulumOptions
 
-(Ui_MainWindow, QMainWindow) = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__),'main_window.ui'))
 
 diagnostic_types = {pyneat.Population:PopulationDiagnostics,
                     pyneat.Species:SpeciesDiagnostics,
                     pyneat.Organism:OrganismDiagnostics,
                     }
+
+FunctionConfig = namedtuple(
+    'FunctionConfig',
+    ['name', 'generator', 'num_inputs', 'num_outputs', 'options_widget', 'diagnostics_widget'])
+
+fitness_functions = [
+    FunctionConfig('xor',
+                   TestCases.xor_fitness_func, 2, 1, None, None),
+
+    FunctionConfig('Single Pendulum, With Velocity',
+                   TestCases.single_pendulum_fitness_func, 2, 1, SinglePendulumOptions, None),
+
+    ]
 
 prob_spinboxes = ['population_size',
                   'min_size_for_champion',
@@ -48,11 +61,17 @@ prob_checkboxes = ['keep_empty_species',
                    'species_representative_from_previous_gen',
 ]
 
+(Ui_MainWindow, QMainWindow) = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__),'main_window.ui'))
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self._set_up_fitness_func_dropdown()
+        self.options_widget = None
 
         # set up callbacks
         self.ui.advance_one_gen.clicked.connect(self.advance_one_gen)
@@ -69,16 +88,10 @@ class MainWindow(QMainWindow):
         self.ui.tree_view.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         self.ui.tree_view.header().setStretchLastSection(False)
 
-
-        # initialize pyneat neat_xor example
+        # Set up NEAT
         self.prob = pyneat.Probabilities()
-        self.seed = pyneat.Genome.ConnectedSeed(2,1)
         self.rng = pyneat.RNG_MersenneTwister(1)
-        self.prob.new_connection_is_recurrent = 0
-        self.fitness_func = TestCases.xor_fitness
-        self.generations = [pyneat.Population(self.seed, self.rng, self.prob)]
-        self.generations[-1].Evaluate(self.fitness_func)
-        self.add_to_treeview(self.generations[-1], 0)
+        self.load_fitness_function(fitness_functions[0])
 
         self._load_probabilities_from_cpp()
         self._setup_probabilities_callbacks()
@@ -102,16 +115,28 @@ class MainWindow(QMainWindow):
                 self.show_diagnostics(item.data())
                 return
 
+    def _set_up_fitness_func_dropdown(self):
+        for config in fitness_functions:
+            self.ui.fitness_func.addItem(config.name)
+        self.ui.fitness_func.currentIndexChanged.connect(self.on_select_fitness_func)
+
     def show_diagnostics(self, obj):
         if type(obj) in diagnostic_types:
             widget_type = diagnostic_types[type(obj)]
             fill_placeholder(self.ui.info_box, widget_type(obj, self))
 
+    def add_next_generation(self, gen):
+        fitness_func = self.fitness_func_generator( **self.fitness_func_args() )
+        gen.Evaluate(fitness_func)
+        self.generations.append(gen)
+        self.add_to_treeview(gen, len(self.generations)-1)
+
     def advance_one_gen(self):
-        new_generation = self.generations[-1].Reproduce()
-        new_generation.Evaluate(self.fitness_func)
-        self.generations.append(new_generation)
-        self.add_to_treeview(new_generation, len(self.generations)-1)
+        if self.generations:
+            gen = self.generations[-1].Reproduce()
+        else:
+            gen = pyneat.Population(self.seed, self.rng, self.prob)
+        self.add_next_generation(gen)
 
     def advance_ten_gen(self):
         for i in range(10):
@@ -121,6 +146,34 @@ class MainWindow(QMainWindow):
         n = self.ui.num_gens.value()
         for i in range(n):
             self.advance_one_gen()
+
+    def on_select_fitness_func(self, selected_index):
+        config = fitness_functions[selected_index]
+        self.load_fitness_function(config)
+
+    def load_fitness_function(self, config):
+        self.seed = pyneat.Genome.ConnectedSeed(2,1)
+        self.prob.new_connection_is_recurrent = 0
+        self.fitness_func_generator = config.generator
+
+        if self.options_widget is not None:
+            index = self.ui.coltabwidget.indexOf(self.options_widget)
+            self.ui.coltabwidget.removeTab(index)
+
+        if config.options_widget is None:
+            self.options_widget = None
+        else:
+            self.options_widget = config.options_widget(self)
+            self.ui.coltabwidget.addTab(self.options_widget, config.name)
+
+        self.standard_model.clear()
+        self.generations = []
+
+    def fitness_func_args(self):
+        if self.options_widget is None:
+            return {}
+        else:
+            return self.options_widget.options()
 
     def add_to_treeview(self, gen, gen_number):
         text = "Gen. {}".format(gen_number)

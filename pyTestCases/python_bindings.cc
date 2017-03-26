@@ -36,8 +36,7 @@ PYBIND11_PLUGIN(TestCases) {
                 "the pole to be considered balanced.")
   );
 
-  auto xor_fitness_obj = py::cast<FitnessFunc>(xor_fitness_func());
-  m.add_object("xor_fitness", xor_fitness_obj);
+  m.def("xor_fitness_func", xor_fitness_func);
 
   return m.ptr();
 }
