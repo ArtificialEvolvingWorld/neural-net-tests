@@ -97,11 +97,10 @@ class MainWindow(QMainWindow):
         self._setup_probabilities_callbacks()
 
         # rig tree view selection model callbacks
-        QtCore.QObject.connect(self.ui.tree_view.selectionModel(),QtCore.SIGNAL('selectionChanged(QItemSelection,QItemSelection)'),self.tree_selection)
+        self.ui.tree_view.selectionModel().selectionChanged.connect(self.tree_selection)
 
 
-    @QtCore.pyqtSlot('QItemSelection, QItemSelection')
-    def tree_selection(self, selected, deselected):
+    def tree_selection(self, selected):
         """ The callback made when the selectionChanged
         signal is emitted from the tree_view class. """
         # currently creates a new widget everytime a seclection
