@@ -35,7 +35,6 @@ def SinglePendulumDiagnostics(with_velocity):
             all_times = []
             all_theta = []
             for step_num in range(opts['num_steps']):
-            #for step_num in range(opts['num_steps']//100):
                 this_theta = normalize_theta(rk.current.theta)
                 all_theta.append(this_theta)
                 all_times.append(rk.time)
@@ -58,5 +57,7 @@ def SinglePendulumDiagnostics(with_velocity):
             axes.set_ylabel('Theta')
 
             figure.tight_layout()
+
+            figure.canvas.draw()
 
     return OutputClass
