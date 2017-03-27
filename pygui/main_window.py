@@ -9,10 +9,14 @@ from PyQt4 import uic, QtCore, QtGui
 import pyneat
 import TestCases
 
-from pygui import (PopulationDiagnostics, SpeciesDiagnostics, OrganismDiagnostics,
-                   SinglePendulumOptions,
-                   XorDiagnostics,
-                   fill_placeholder)
+from pygui.population_diagnostics import PopulationDiagnostics
+from pygui.species_diagnostics import SpeciesDiagnostics
+from pygui.organism_diagnostics import OrganismDiagnostics
+
+from pygui.single_pendulum_opts import SinglePendulumOptions
+from pygui.xor_diagnostics import XorDiagnostics
+
+from pygui.util import fill_placeholder
 
 
 diagnostic_types = {pyneat.Population:PopulationDiagnostics,
