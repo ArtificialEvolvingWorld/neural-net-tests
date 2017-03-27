@@ -14,6 +14,7 @@ from pygui.species_diagnostics import SpeciesDiagnostics
 from pygui.organism_diagnostics import OrganismDiagnostics
 
 from pygui.single_pendulum_opts import SinglePendulumOptions
+from pygui.single_pendulum_diagnostics import SinglePendulumDiagnostics
 from pygui.xor_diagnostics import XorDiagnostics
 
 from pygui.util import fill_placeholder
@@ -33,7 +34,8 @@ fitness_functions = [
                    TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics),
 
     FunctionConfig('Single Pendulum, With Velocity',
-                   TestCases.single_pendulum_fitness_func, 2, 1, SinglePendulumOptions, None),
+                   TestCases.single_pendulum_fitness_func, 2, 1,
+                   SinglePendulumOptions, SinglePendulumDiagnostics),
 
     ]
 
@@ -129,7 +131,7 @@ class MainWindow(QMainWindow):
 
         if self.diagnostics_widget is not None:
             best_selected = self.get_best_of_selected(obj)
-            self.diagnostics_widget.update(best_selected)
+            self.diagnostics_widget.update(best_selected, self.fitness_func_args())
 
     def get_best_of_selected(self, obj):
         if isinstance(obj, pyneat.Population):

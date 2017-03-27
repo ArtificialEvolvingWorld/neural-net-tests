@@ -1,6 +1,7 @@
 #include "SinglePendulum.hh"
 #include "SinglePendulumFitness.hh"
 #include "XorFitness.hh"
+#include "RungeKutta.hh"
 
 #include "pybind11/pybind11.h"
 
@@ -14,6 +15,7 @@ PYBIND11_PLUGIN(TestCases) {
 
   py::class_<SinglePendulum>(m, "SinglePendulum")
     .def(py::init<>())
+    .def(py::init<const SinglePendulum&>())
     .def_readwrite("mass_cart", &SinglePendulum::mass_cart)
     .def_readwrite("mass_rod", &SinglePendulum::mass_rod)
     .def_readwrite("length", &SinglePendulum::length)
@@ -23,6 +25,13 @@ PYBIND11_PLUGIN(TestCases) {
     .def_readwrite("theta", &SinglePendulum::theta)
     .def_readwrite("v", &SinglePendulum::v)
     .def_readwrite("omega", &SinglePendulum::omega)
+    ;
+
+  py::class_<RungeKutta<SinglePendulum> >(m, "SinglePendulum_RungeKutta")
+    .def(py::init<SinglePendulum, double>())
+    .def_property_readonly("current", &RungeKutta<SinglePendulum>::GetCurrent)
+    .def("Step", (void (RungeKutta<SinglePendulum>::*)())&RungeKutta<SinglePendulum>::Step)
+    .def_property_readonly("time", &RungeKutta<SinglePendulum>::GetTime)
     ;
 
   m.def("single_pendulum_fitness_func", single_pendulum_fitness_func,
