@@ -34,7 +34,18 @@ PYBIND11_PLUGIN(TestCases) {
     .def_property_readonly("time", &RungeKutta<SinglePendulum>::GetTime)
     ;
 
-  m.def("single_pendulum_fitness_func", single_pendulum_fitness_func,
+  m.def("single_pendulum_fitness_func_with_velocity", single_pendulum_fitness_func_with_velocity,
+        py::arg("initial_state"),
+        py::arg("deltaT") = 0.1,
+        py::arg("num_steps") = 10000,
+        py::arg("max_angle_balanced") = 5.0*(3.1415926/180),
+        py::doc("Returns a fitness function for single pendulum balancing, with"
+                "velocity. Neural nets used should take 2 inputs, and return one"
+                "output. max_angle_balanced is the angle from vertical, in radians, for"
+                "the pole to be considered balanced.")
+  );
+
+  m.def("single_pendulum_fitness_func_no_velocity", single_pendulum_fitness_func_no_velocity,
         py::arg("initial_state"),
         py::arg("deltaT") = 0.1,
         py::arg("num_steps") = 10000,

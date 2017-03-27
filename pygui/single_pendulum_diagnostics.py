@@ -14,45 +14,49 @@ def normalize_theta(theta):
     n = round(theta / (2*math.pi))
     return theta - n*(2*math.pi)
 
-class SinglePendulumDiagnostics(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.ui = Ui_Widget()
-        self.ui.setupUi(self)
+def SinglePendulumDiagnostics(with_velocity):
+    class OutputClass(QWidget):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.ui = Ui_Widget()
+            self.ui.setupUi(self)
 
-    def update(self, org, opts):
-        figure = self.ui.matplotlibCanvas.figure
-        figure.clear()
+        def update(self, org, opts):
+            figure = self.ui.matplotlibCanvas.figure
+            figure.clear()
 
-        if org is None:
-            return
-
-
-        rk = TestCases.SinglePendulum_RungeKutta(
-            opts['initial_state'], opts['deltaT'])
-
-        all_times = []
-        all_theta = []
-        #for step_num in range(opts['num_steps']):
-        for step_num in range(opts['num_steps']//100):
-            this_theta = normalize_theta(rk.current.theta)
-            all_theta.append(this_theta)
-            all_times.append(rk.time)
+            if org is None:
+                return
 
 
-            val = org.network.evaluate([this_theta])[0]
-            rk.current.Fext = 5*(2*val-1)
+            rk = TestCases.SinglePendulum_RungeKutta(
+                opts['initial_state'], opts['deltaT'])
 
-            rk.Step()
+            all_times = []
+            all_theta = []
+            for step_num in range(opts['num_steps']):
+            #for step_num in range(opts['num_steps']//100):
+                this_theta = normalize_theta(rk.current.theta)
+                all_theta.append(this_theta)
+                all_times.append(rk.time)
 
 
-        axes = self.ui.matplotlibCanvas.figure.add_subplot(1,1,1)
-        axes.plot(all_times, np.degrees(all_theta), color='black')
-        limit = np.degrees(opts['max_angle_balanced'])
-        axes.plot([all_times[0], all_times[-1], None, all_times[0], all_times[-1]],
-                  [limit, limit, None, -limit, -limit],
-                  color='red')
-        axes.set_xlabel('Time')
-        axes.set_ylabel('Theta')
+                inputs = [this_theta,rk.current.omega] if with_velocity else [this_theta]
+                val = org.network.evaluate(inputs)[0]
+                rk.current.Fext = 5*(2*val-1)
 
-        figure.tight_layout()
+                rk.Step()
+
+
+            axes = self.ui.matplotlibCanvas.figure.add_subplot(1,1,1)
+            axes.plot(all_times, np.degrees(all_theta), color='black')
+            limit = np.degrees(opts['max_angle_balanced'])
+            axes.plot([all_times[0], all_times[-1], None, all_times[0], all_times[-1]],
+                      [limit, limit, None, -limit, -limit],
+                      color='red')
+            axes.set_xlabel('Time')
+            axes.set_ylabel('Theta')
+
+            figure.tight_layout()
+
+    return OutputClass

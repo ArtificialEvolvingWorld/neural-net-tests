@@ -34,8 +34,12 @@ fitness_functions = [
                    TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics),
 
     FunctionConfig('Single Pendulum, With Velocity',
-                   TestCases.single_pendulum_fitness_func, 2, 1,
-                   SinglePendulumOptions, SinglePendulumDiagnostics),
+                   TestCases.single_pendulum_fitness_func_with_velocity, 2, 1,
+                   SinglePendulumOptions, SinglePendulumDiagnostics(True)),
+
+    FunctionConfig('Single Pendulum, No Velocity',
+                   TestCases.single_pendulum_fitness_func_no_velocity, 1, 1,
+                   SinglePendulumOptions, SinglePendulumDiagnostics(False)),
 
     ]
 
@@ -176,7 +180,7 @@ class MainWindow(QMainWindow):
         self.load_fitness_function(config)
 
     def load_fitness_function(self, config):
-        self.seed = pyneat.Genome.ConnectedSeed(2,1)
+        self.seed = pyneat.Genome.ConnectedSeed(config.num_inputs, config.num_outputs)
         self.prob.new_connection_is_recurrent = 0
         self.fitness_func_generator = config.generator
 
