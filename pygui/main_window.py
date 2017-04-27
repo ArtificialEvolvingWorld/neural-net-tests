@@ -8,6 +8,7 @@ from PyQt4 import uic, QtCore, QtGui
 
 import pyneat
 import TestCases
+import IPython
 
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
@@ -16,6 +17,7 @@ from pygui.organism_diagnostics import OrganismDiagnostics
 from pygui.single_pendulum_opts import SinglePendulumOptions
 from pygui.single_pendulum_diagnostics import SinglePendulumDiagnostics
 from pygui.xor_diagnostics import XorDiagnostics
+from pygui.regression_1d import Regression1DOptions, Regression1DDiagnostics, regression_default_prob
 
 from pygui.util import fill_placeholder
 
@@ -27,19 +29,26 @@ diagnostic_types = {pyneat.Population:PopulationDiagnostics,
 
 FunctionConfig = namedtuple(
     'FunctionConfig',
-    ['name', 'generator', 'num_inputs', 'num_outputs', 'options_widget', 'diagnostics_widget'])
+    ['name', 'generator', 'num_inputs', 'num_outputs',
+     'options_widget', 'diagnostics_widget', 'default_prob',
+     'output_activation_func'])
 
 fitness_functions = [
     FunctionConfig('xor',
-                   TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics),
+                   TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics, None, None),
 
     FunctionConfig('Single Pendulum, With Velocity',
                    TestCases.single_pendulum_fitness_func_with_velocity, 2, 1,
-                   SinglePendulumOptions, SinglePendulumDiagnostics(True)),
+                   SinglePendulumOptions, SinglePendulumDiagnostics(True), None, None),
 
     FunctionConfig('Single Pendulum, No Velocity',
                    TestCases.single_pendulum_fitness_func_no_velocity, 1, 1,
-                   SinglePendulumOptions, SinglePendulumDiagnostics(False)),
+                   SinglePendulumOptions, SinglePendulumDiagnostics(False), None, None),
+
+    FunctionConfig('1d Regression',
+                   TestCases.regression_1d_fitness, 1, 1,
+                   Regression1DOptions, Regression1DDiagnostics, regression_default_prob,
+                   pyneat.ActivationFunction.Identity),
 
     ]
 
@@ -99,7 +108,7 @@ class MainWindow(QMainWindow):
 
         # Set up NEAT
         self.prob = pyneat.Probabilities()
-        self.rng = pyneat.RNG_MersenneTwister(1)
+        self.rng = pyneat.RNG_MersenneTwister()
         self.load_fitness_function(fitness_functions[0])
 
         self._load_probabilities_from_cpp()
@@ -180,7 +189,13 @@ class MainWindow(QMainWindow):
         self.load_fitness_function(config)
 
     def load_fitness_function(self, config):
-        self.seed = pyneat.Genome.ConnectedSeed(config.num_inputs, config.num_outputs)
+        if config.output_activation_func is None:
+            output_activation_func = pyneat.ActivationFunction.Sigmoid
+        else:
+            output_activation_func = config.output_activation_func
+
+        self.seed = pyneat.Genome.ConnectedSeed(config.num_inputs, config.num_outputs,
+                                                output_activation_func)
         self.prob.new_connection_is_recurrent = 0
         self.fitness_func_generator = config.generator
 
@@ -201,6 +216,9 @@ class MainWindow(QMainWindow):
         if config.options_widget is not None:
             self.options_widget = config.options_widget(self)
             self.ui.coltabwidget.addTab(self.options_widget, config.name)
+
+        if config.default_prob is not None:
+            config.default_prob(self.prob)
 
         self.standard_model.clear()
         self.generations = []

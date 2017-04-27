@@ -21,17 +21,17 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Num Nodes:</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
     <widget class="QLabel" name="num_connections">
      <property name="text">
       <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Num Nodes:</string>
      </property>
     </widget>
    </item>
@@ -49,28 +49,38 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Fitness:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QLabel" name="fitness">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Adj. Fitness:</string>
+   <item row="6" column="0" colspan="2">
+    <widget class="QFrame" name="plot_holder">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Adjusted Fitness</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
     <widget class="QLabel" name="adj_fitness">
      <property name="text">
       <string/>
@@ -79,6 +89,12 @@
    </item>
    <item row="5" column="0" colspan="2">
     <widget class="MatplotlibCanvas" name="matplotlibCanvas">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>250</height>
+      </size>
+     </property>
      <property name="toolTip">
       <string>Python console</string>
      </property>

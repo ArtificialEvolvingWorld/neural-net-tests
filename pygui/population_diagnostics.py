@@ -22,10 +22,14 @@ class PopulationDiagnostics(QWidget):
         best_fitness = max(org.fitness
                            for spec in self.population.species
                            for org in spec.organisms)
+        total_adj_fitness = sum(org.adj_fitness
+                                for spec in self.population.species
+                                for org in spec.organisms)
 
         self.ui.num_organisms.setText(str(num_organisms))
         self.ui.num_species.setText(str(num_species))
         self.ui.best_fitness.setText(str(best_fitness))
+        self.ui.total_adj_fitness.setText(str(total_adj_fitness))
 
     def setup_figure(self):
         self.figure = self.ui.matplotlibCanvas.figure

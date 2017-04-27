@@ -37,18 +37,37 @@ class OrganismDiagnostics(QWidget):
         net = self.organism.network
         g = graph.Graph()
 
-        for i,node_type in enumerate(net.node_types):
-            color = {pyneat.NodeType.Input: 'green',
-                     pyneat.NodeType.Bias: 'gray',
-                     pyneat.NodeType.Hidden: 'blue',
-                     pyneat.NodeType.Output: 'red',
-            }[node_type]
+        for i,(node_type,func) in enumerate(zip(net.node_types, net.activation_functions)):
+            color_table_type = {
+                pyneat.NodeType.Input:                  '#2124FF',
+                pyneat.NodeType.Bias:                   '#1F22C1',
+                pyneat.NodeType.Output:                 '#FF2718',
+            }
 
-            fixed_y = {pyneat.NodeType.Input: 0,
-                       pyneat.NodeType.Bias: 0,
-                       pyneat.NodeType.Hidden: None,
-                       pyneat.NodeType.Output: 1,
-            }[node_type]
+            color_table_func = {
+                pyneat.ActivationFunction.Identity:     '#68C6D3',
+                pyneat.ActivationFunction.Sigmoid:      '#EE8A2A',
+                pyneat.ActivationFunction.Tanh:         '#B17516',
+                pyneat.ActivationFunction.Relu:         '#B1B0AA',
+                pyneat.ActivationFunction.Gaussian:     '#2CB11F',
+                pyneat.ActivationFunction.Sin:          '#F6DE39',
+                pyneat.ActivationFunction.Cos:          '#C5B12C',
+                pyneat.ActivationFunction.Abs:          '#E685E7',
+                pyneat.ActivationFunction.Square:       '#F050E6',
+            }
+
+            if node_type in color_table_type:
+                color = color_table_type[node_type]
+            else:
+                color = color_table_func[func]
+
+            try:
+                fixed_y = {pyneat.NodeType.Input: 0,
+                           pyneat.NodeType.Bias: 0,
+                           pyneat.NodeType.Output: 1,
+                       }[node_type]
+            except:
+                fixed_y = None
 
             g.add_node(i, color=color)
             if fixed_y is not None:
