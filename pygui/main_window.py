@@ -7,18 +7,12 @@ import numpy as np
 from PyQt4 import uic, QtCore, QtGui
 
 import pyneat
-import TestCases
-import IPython
 
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
 from pygui.organism_diagnostics import OrganismDiagnostics
 
-from pygui.single_pendulum_opts import SinglePendulumOptions
-from pygui.single_pendulum_diagnostics import SinglePendulumDiagnostics
-from pygui.xor_diagnostics import XorDiagnostics
-from pygui.regression_1d import Regression1DOptions, Regression1DDiagnostics, regression_default_prob
-
+from pygui.fitness_functions import fitness_functions
 from pygui.util import fill_placeholder
 
 
@@ -26,31 +20,6 @@ diagnostic_types = {pyneat.Population:PopulationDiagnostics,
                     pyneat.Species:SpeciesDiagnostics,
                     pyneat.Organism:OrganismDiagnostics,
                     }
-
-FunctionConfig = namedtuple(
-    'FunctionConfig',
-    ['name', 'generator', 'num_inputs', 'num_outputs',
-     'options_widget', 'diagnostics_widget', 'default_prob',
-     'output_activation_func'])
-
-fitness_functions = [
-    FunctionConfig('xor',
-                   TestCases.xor_fitness_func, 2, 1, None, XorDiagnostics, None, None),
-
-    FunctionConfig('Single Pendulum, With Velocity',
-                   TestCases.single_pendulum_fitness_func_with_velocity, 2, 1,
-                   SinglePendulumOptions, SinglePendulumDiagnostics(True), None, None),
-
-    FunctionConfig('Single Pendulum, No Velocity',
-                   TestCases.single_pendulum_fitness_func_no_velocity, 1, 1,
-                   SinglePendulumOptions, SinglePendulumDiagnostics(False), None, None),
-
-    FunctionConfig('1d Regression',
-                   TestCases.regression_1d_fitness, 1, 1,
-                   Regression1DOptions, Regression1DDiagnostics, regression_default_prob,
-                   pyneat.ActivationFunction.Identity),
-
-    ]
 
 prob_spinboxes = ['population_size',
                   'min_size_for_champion',
