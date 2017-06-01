@@ -9,6 +9,7 @@ from PyQt4 import uic, QtCore, QtGui
 import pyneat
 
 from pygui.cppn_function_tab import CPPNFunctionTab
+from pygui.custom_network_seed_tab import CustomNetworkSeedTab
 
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
@@ -78,6 +79,8 @@ class MainWindow(QMainWindow):
         self.ui.tree_view.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         self.ui.tree_view.header().setStretchLastSection(False)
 
+        self.custom_network_seed_tab = CustomNetworkSeedTab(self)
+
         # Set up NEAT
         self.prob = pyneat.Probabilities()
         self.rng = pyneat.RNG_MersenneTwister()
@@ -146,8 +149,10 @@ class MainWindow(QMainWindow):
         if self.generations:
             gen = self.generations[-1].Reproduce()
         else:
-            gen = pyneat.Population(self.seed, self.rng, self.prob)
+            seed = self.custom_network_seed_tab.make_seed()
+            gen = pyneat.Population(seed, self.rng, self.prob)
         self.add_next_generation(gen)
+        self._hide_custom_network_seed_tab()
 
     def advance_ten_gen(self):
         for i in range(10):
@@ -168,8 +173,7 @@ class MainWindow(QMainWindow):
         else:
             output_activation_func = config.output_activation_func
 
-        self.seed = pyneat.Genome.ConnectedSeed(config.num_inputs, config.num_outputs,
-                                                output_activation_func)
+        # No wonder it was awful at the no-velocity pendulum!!
         self.prob.new_connection_is_recurrent = 0
         self.fitness_func_generator = config.generator
 
@@ -196,6 +200,7 @@ class MainWindow(QMainWindow):
 
         self.standard_model.clear()
         self.generations = []
+        self._show_custom_network_seed_tab(config)
 
     def fitness_func_args(self):
         if self.options_widget is None:
@@ -272,3 +277,17 @@ class MainWindow(QMainWindow):
         for name in prob_checkboxes:
             checkbox = getattr(self.ui,name)
             setattr(self.prob, name, bool(checkbox.checkState()))
+
+
+    def _show_custom_network_seed_tab(self, config):
+        self.custom_network_seed_tab.init(config)
+        index = self.ui.coltabwidget.indexOf(self.custom_network_seed_tab)
+        if index==-1:
+            self.ui.coltabwidget.addTab(self.custom_network_seed_tab,
+                                        'Initial Seed Network')
+
+
+    def _hide_custom_network_seed_tab(self):
+        index = self.ui.coltabwidget.indexOf(self.custom_network_seed_tab)
+        if index!=-1:
+            self.ui.coltabwidget.removeTab(index)
