@@ -31,7 +31,9 @@ class CPPNFunctionTab(QtGui.QWidget):
     def load_values_from_cpp(self):
         for func,spinbox in self.spinboxes.items():
             value = self.prob.cppn_odds[func]
+            spinbox.blockSignals(True)
             spinbox.setValue(value)
+            spinbox.blockSignals(False)
 
 
     def load_values_to_cpp(self):

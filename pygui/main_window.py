@@ -197,6 +197,7 @@ class MainWindow(QMainWindow):
 
         if config.default_prob is not None:
             config.default_prob(self.prob)
+            self._load_probabilities_from_cpp()
 
         self.standard_model.clear()
         self.generations = []
@@ -238,11 +239,18 @@ class MainWindow(QMainWindow):
     def _load_probabilities_from_cpp(self):
         for name in prob_spinboxes:
             spinbox = getattr(self.ui,name)
+            spinbox.blockSignals(True)
             spinbox.setValue(getattr(self.prob,name))
+            spinbox.blockSignals(False)
 
         for name in prob_checkboxes:
             checkbox = getattr(self.ui,name)
+            checkbox.blockSignals(True)
             checkbox.setChecked(getattr(self.prob,name))
+            checkbox.blockSignals(False)
+
+        self._show_hide_cppn_function_tab()
+        self.cppn_tab.load_values_from_cpp()
 
 
     def _setup_probabilities_callbacks(self):
