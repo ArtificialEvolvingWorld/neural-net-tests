@@ -8,6 +8,8 @@ from PyQt4 import uic, QtCore, QtGui
 
 import pyneat
 
+from pygui.cppn_function_tab import CPPNFunctionTab
+
 from pygui.population_diagnostics import PopulationDiagnostics
 from pygui.species_diagnostics import SpeciesDiagnostics
 from pygui.organism_diagnostics import OrganismDiagnostics
@@ -45,6 +47,7 @@ prob_spinboxes = ['population_size',
 
 prob_checkboxes = ['keep_empty_species',
                    'species_representative_from_previous_gen',
+                   'use_compositional_pattern_producing_networks',
 ]
 
 (Ui_MainWindow, QMainWindow) = uic.loadUiType(
@@ -80,8 +83,10 @@ class MainWindow(QMainWindow):
         self.rng = pyneat.RNG_MersenneTwister()
         self.load_fitness_function(fitness_functions[0])
 
+        self.cppn_tab = CPPNFunctionTab(self.prob, self)
         self._load_probabilities_from_cpp()
         self._setup_probabilities_callbacks()
+        self._show_hide_cppn_function_tab()
 
         # rig tree view selection model callbacks
         self.ui.tree_view.selectionModel().selectionChanged.connect(self.tree_selection)
@@ -224,6 +229,7 @@ class MainWindow(QMainWindow):
 
         self.standard_model.appendRow(gen_item)
 
+
     def _load_probabilities_from_cpp(self):
         for name in prob_spinboxes:
             spinbox = getattr(self.ui,name)
@@ -237,11 +243,25 @@ class MainWindow(QMainWindow):
     def _setup_probabilities_callbacks(self):
         for name in prob_spinboxes:
             spinbox = getattr(self.ui,name)
-            spinbox.valueChanged.connect(self._load_probabilities_to_cpp)
+            spinbox.valueChanged.connect(self._on_probability_change)
 
         for name in prob_checkboxes:
             checkbox = getattr(self.ui,name)
-            checkbox.clicked.connect(self._load_probabilities_to_cpp)
+            checkbox.clicked.connect(self._on_probability_change)
+
+
+    def _on_probability_change(self):
+        self._load_probabilities_to_cpp()
+        self._show_hide_cppn_function_tab()
+
+
+    def _show_hide_cppn_function_tab(self):
+        show_tab = self.prob.use_compositional_pattern_producing_networks
+        index = self.ui.coltabwidget.indexOf(self.cppn_tab)
+        if show_tab and index==-1:
+            self.ui.coltabwidget.addTab(self.cppn_tab, 'CPPN Functions')
+        elif not show_tab and index!=-1:
+            self.ui.coltabwidget.removeTab(index)
 
 
     def _load_probabilities_to_cpp(self):

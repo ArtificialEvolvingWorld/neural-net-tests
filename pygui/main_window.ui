@@ -281,15 +281,15 @@ QGroupBox::title {
        <attribute name="title">
         <string>Mutation Opts</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
          <widget class="QLabel" name="label_9">
           <property name="text">
            <string>Matching Gene, Choose Mother: </string>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="matching_gene_choose_mother">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -302,14 +302,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2">
+        <item row="1" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>Keep Non-Matching Mother Gene:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="keep_non_matching_mother_gene">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -322,14 +322,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_11">
           <property name="text">
            <string>Keep Non-Matching Father Gene:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
+        <item row="2" column="1">
          <widget class="QDoubleSpinBox" name="keep_non_matching_father_gene">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -342,14 +342,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_12">
           <property name="text">
            <string>Mutation Prob, Adjust Weights:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
+        <item row="3" column="1">
          <widget class="QDoubleSpinBox" name="mutation_prob_adjust_weights">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -362,14 +362,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="4" column="0" colspan="2">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_13">
           <property name="text">
            <string>Weight Mutation, Is Severe:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
+        <item row="4" column="1">
          <widget class="QDoubleSpinBox" name="weight_mutation_is_severe">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -382,14 +382,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="5" column="0" colspan="2">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_14">
           <property name="text">
            <string>Weight Mutation, Small Adjust:</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="2">
+        <item row="5" column="1">
          <widget class="QDoubleSpinBox" name="weight_mutation_small_adjust">
           <property name="maximum">
            <double>10.000000000000000</double>
@@ -402,14 +402,34 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="7" column="0" colspan="2">
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Weight Mutation, Large Reset:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="weight_mutation_reset_range">
+          <property name="maximum">
+           <double>200.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>10.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
          <widget class="QLabel" name="label_16">
           <property name="text">
            <string>Mutation Prob, Add Connection:</string>
           </property>
          </widget>
         </item>
-        <item row="7" column="2">
+        <item row="7" column="1">
          <widget class="QDoubleSpinBox" name="mutation_prob_add_connection">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -422,14 +442,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="8" column="0" colspan="2">
+        <item row="8" column="0">
          <widget class="QLabel" name="label_17">
           <property name="text">
            <string>New Connection, Prob Recurrent:</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="2">
+        <item row="8" column="1">
          <widget class="QDoubleSpinBox" name="new_connection_is_recurrent">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -442,14 +462,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="9" column="0" colspan="2">
+        <item row="9" column="0">
          <widget class="QLabel" name="label_18">
           <property name="text">
            <string>Mutation Prob, Add Node:</string>
           </property>
          </widget>
         </item>
-        <item row="9" column="2">
+        <item row="9" column="1">
          <widget class="QDoubleSpinBox" name="mutation_prob_add_node">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -463,13 +483,20 @@ QGroupBox::title {
          </widget>
         </item>
         <item row="10" column="0" colspan="2">
+         <widget class="QCheckBox" name="use_compositional_pattern_producing_networks">
+          <property name="text">
+           <string>Add Node, Use CPPN</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="0">
          <widget class="QLabel" name="label_19">
           <property name="text">
            <string>Mutation Prob, Re-enable Conn:</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="2">
+        <item row="11" column="1">
          <widget class="QDoubleSpinBox" name="mutation_prob_reenable_connection">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -482,14 +509,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="11" column="0" colspan="2">
+        <item row="12" column="0">
          <widget class="QLabel" name="label_20">
           <property name="text">
            <string>Mutation Prob, Toggle Conn:</string>
           </property>
          </widget>
         </item>
-        <item row="11" column="2">
+        <item row="12" column="1">
          <widget class="QDoubleSpinBox" name="mutation_prob_toggle_connection">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -499,26 +526,6 @@ QGroupBox::title {
           </property>
           <property name="value">
            <double>0.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QDoubleSpinBox" name="weight_mutation_reset_range">
-          <property name="maximum">
-           <double>200.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>10.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0" colspan="2">
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>Weight Mutation, Large Reset:</string>
           </property>
          </widget>
         </item>
