@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>587</height>
+    <width>1120</width>
+    <height>995</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,6 +38,13 @@ QGroupBox::title {
        <bool>false</bool>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0">
+        <widget class="QSpinBox" name="num_gens">
+         <property name="value">
+          <number>25</number>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="2">
         <widget class="QPushButton" name="advance_one_gen">
          <property name="text">
@@ -65,13 +72,6 @@ QGroupBox::title {
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QSpinBox" name="num_gens">
-         <property name="value">
-          <number>25</number>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QPushButton" name="advance_n_gen">
          <property name="text">
@@ -81,6 +81,13 @@ QGroupBox::title {
        </item>
        <item row="2" column="2">
         <widget class="QComboBox" name="fitness_func"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="reset">
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -93,7 +100,7 @@ QGroupBox::title {
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <property name="collapsed">
+      <property name="collapsed" stdset="0">
        <bool>true</bool>
       </property>
       <widget class="QWidget" name="page">
@@ -577,8 +584,8 @@ QGroupBox::title {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
-     <height>24</height>
+     <width>1120</width>
+     <height>33</height>
     </rect>
    </property>
   </widget>

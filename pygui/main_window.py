@@ -68,6 +68,7 @@ class MainWindow(QMainWindow):
         self.ui.advance_one_gen.clicked.connect(self.advance_one_gen)
         self.ui.advance_ten_gen.clicked.connect(self.advance_ten_gen)
         self.ui.advance_n_gen.clicked.connect(self.advance_n_gen)
+        self.ui.reset.clicked.connect(self.reset)
 
         # set up data model
         self.standard_model = QtGui.QStandardItemModel()
@@ -85,7 +86,8 @@ class MainWindow(QMainWindow):
         self.prob = pyneat.Probabilities()
         self.cppn_tab = CPPNFunctionTab(self.prob, self)
         self.rng = pyneat.RNG_MersenneTwister()
-        self.load_fitness_function(fitness_functions[0])
+        self.current_fitness_index = 0
+        self.load_fitness_function(fitness_functions[self.current_fitness_index])
 
         self._load_probabilities_from_cpp()
         self._setup_probabilities_callbacks()
@@ -94,6 +96,8 @@ class MainWindow(QMainWindow):
         # rig tree view selection model callbacks
         self.ui.tree_view.selectionModel().selectionChanged.connect(self.tree_selection)
 
+    def reset(self):
+        self.on_select_fitness_func(self.current_fitness_index)
 
     def tree_selection(self, selected):
         """ The callback made when the selectionChanged
@@ -164,6 +168,7 @@ class MainWindow(QMainWindow):
             self.advance_one_gen()
 
     def on_select_fitness_func(self, selected_index):
+        self.current_fitness_index = selected_index
         config = fitness_functions[selected_index]
         self.load_fitness_function(config)
 
