@@ -41,7 +41,7 @@ std::function<double(NeuralNet&)> single_pendulum_fitness_func_with_velocity(
     for(int i=0; i<num_steps; i++) {
       auto& current = rk.GetCurrent();
 
-      double val = net.evaluate({normalize_theta(current.theta)})[0];
+      double val = net.evaluate({normalize_theta(current.theta), current.omega})[0];
       current.Fext = 5*(2*val-1);
 
       rk.Step();

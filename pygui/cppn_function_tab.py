@@ -13,6 +13,7 @@ class CPPNFunctionTab(QtGui.QWidget):
     def generate_labels(self):
         layout = self.layout()
 
+
         for i,(func,odds) in enumerate(self.prob.cppn_odds.items()):
             label = QtGui.QLabel(self)
             label.setText(str(func))
@@ -25,7 +26,7 @@ class CPPNFunctionTab(QtGui.QWidget):
             spinbox.valueChanged.connect(self.load_values_to_cpp)
             layout.addWidget(spinbox, i, 1)
 
-            self.spinboxes[func] = spinbox
+            self.spinboxes[type(func)(func)] = spinbox
 
 
     def load_values_from_cpp(self):

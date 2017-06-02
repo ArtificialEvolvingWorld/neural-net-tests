@@ -83,10 +83,10 @@ class MainWindow(QMainWindow):
 
         # Set up NEAT
         self.prob = pyneat.Probabilities()
+        self.cppn_tab = CPPNFunctionTab(self.prob, self)
         self.rng = pyneat.RNG_MersenneTwister()
         self.load_fitness_function(fitness_functions[0])
 
-        self.cppn_tab = CPPNFunctionTab(self.prob, self)
         self._load_probabilities_from_cpp()
         self._setup_probabilities_callbacks()
         self._show_hide_cppn_function_tab()
@@ -173,8 +173,6 @@ class MainWindow(QMainWindow):
         else:
             output_activation_func = config.output_activation_func
 
-        # No wonder it was awful at the no-velocity pendulum!!
-        self.prob.new_connection_is_recurrent = 0
         self.fitness_func_generator = config.generator
 
         if self.diagnostics_widget is not None:
@@ -195,9 +193,10 @@ class MainWindow(QMainWindow):
             self.options_widget = config.options_widget(self)
             self.ui.coltabwidget.addTab(self.options_widget, config.name)
 
+        self.prob.reset()
         if config.default_prob is not None:
             config.default_prob(self.prob)
-            self._load_probabilities_from_cpp()
+        self._load_probabilities_from_cpp()
 
         self.standard_model.clear()
         self.generations = []
