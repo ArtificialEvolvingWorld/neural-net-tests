@@ -52,19 +52,6 @@ QGroupBox::title {
          </property>
         </widget>
        </item>
-       <item row="0" column="3" rowspan="3">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>235</width>
-           <height>78</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QPushButton" name="advance_ten_gen">
          <property name="text">
@@ -88,6 +75,19 @@ QGroupBox::title {
           <string>Reset</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="3" rowspan="3">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>235</width>
+           <height>78</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -573,11 +573,32 @@ QGroupBox::title {
       </layout>
      </widget>
     </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>Queued:</string>
+      </property>
+      <widget class="QLabel" name="queued_label">
+       <property name="geometry">
+        <rect>
+         <x>148</x>
+         <y>5</y>
+         <width>111</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
    </layout>
    <zorder>groupBox_2</zorder>
    <zorder>groupBox</zorder>
    <zorder>all_info_box</zorder>
    <zorder>coltabwidget</zorder>
+   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
