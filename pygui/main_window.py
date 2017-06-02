@@ -55,7 +55,7 @@ prob_checkboxes = ['keep_empty_species',
     os.path.join(os.path.dirname(__file__),'main_window.ui'))
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, args, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -86,7 +86,12 @@ class MainWindow(QMainWindow):
         self._set_up_background_thread()
         self.prob = pyneat.Probabilities()
         self.cppn_tab = CPPNFunctionTab(self.prob, self)
-        self.rng = pyneat.RNG_MersenneTwister()
+        def init_rng():
+            if args.seed is not None:
+                self.rng = pyneat.RNG_MersenneTwister(args.seed)
+            else:
+                self.rng = pyneat.RNG_MersenneTwister()
+        self.initialize_rng = init_rng
         self.current_fitness_index = 0
         self.load_fitness_function(fitness_functions[self.current_fitness_index])
 
@@ -223,6 +228,7 @@ class MainWindow(QMainWindow):
             self.ui.coltabwidget.addTab(self.options_widget, config.name)
 
         self.prob.reset()
+        self.initialize_rng()
         if config.default_prob is not None:
             config.default_prob(self.prob)
         self._load_probabilities_from_cpp()
@@ -328,3 +334,5 @@ class MainWindow(QMainWindow):
         index = self.ui.coltabwidget.indexOf(self.custom_network_seed_tab)
         if index!=-1:
             self.ui.coltabwidget.removeTab(index)
+
+
