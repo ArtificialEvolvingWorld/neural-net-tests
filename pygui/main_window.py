@@ -83,6 +83,7 @@ class MainWindow(QMainWindow):
         self.custom_network_seed_tab = CustomNetworkSeedTab(self)
 
         # Set up NEAT
+        self._set_up_background_thread()
         self.prob = pyneat.Probabilities()
         self.cppn_tab = CPPNFunctionTab(self.prob, self)
         self.rng = pyneat.RNG_MersenneTwister()
@@ -143,6 +144,37 @@ class MainWindow(QMainWindow):
             return None
 
 
+    def _set_up_background_thread(self):
+        self.background_thread = None
+        self.background_thread_timer = QtCore.QTimer(self)
+        self.background_thread_timer.setInterval(1000)
+        self.background_thread_timer.timeout.connect(self.check_for_new_generations)
+        self.background_thread_timer.start()
+
+    def check_for_new_generations(self):
+        if self.background_thread is None:
+            return
+
+        while True:
+            # Population returned already has evaluation performed.
+            gen = self.background_thread.get_next_generation()
+            if gen is None:
+                break
+
+            self.generations.append(gen)
+            self.add_to_treeview(gen, len(self.generations)-1)
+            self._hide_custom_network_seed_tab()
+
+    def reproduce_in_background(self, n):
+        if self.background_thread is None:
+            seed = self.custom_network_seed_tab.make_seed()
+            pop = pyneat.Population(seed, self.rng, self.prob)
+            self.background_thread = pyneat.PopulationBackgroundThread(pop)
+
+        fitness_func = self.fitness_func_generator( **self.fitness_func_args() )
+        self.background_thread.perform_reproduction(fitness_func, n)
+
+
     def add_next_generation(self, gen):
         fitness_func = self.fitness_func_generator( **self.fitness_func_args() )
         gen.Evaluate(fitness_func)
@@ -150,22 +182,14 @@ class MainWindow(QMainWindow):
         self.add_to_treeview(gen, len(self.generations)-1)
 
     def advance_one_gen(self):
-        if self.generations:
-            gen = self.generations[-1].Reproduce()
-        else:
-            seed = self.custom_network_seed_tab.make_seed()
-            gen = pyneat.Population(seed, self.rng, self.prob)
-        self.add_next_generation(gen)
-        self._hide_custom_network_seed_tab()
+        self.reproduce_in_background(1)
 
     def advance_ten_gen(self):
-        for i in range(10):
-            self.advance_one_gen()
+        self.reproduce_in_background(10)
 
     def advance_n_gen(self):
         n = self.ui.num_gens.value()
-        for i in range(n):
-            self.advance_one_gen()
+        self.reproduce_in_background(n)
 
     def on_select_fitness_func(self, selected_index):
         self.current_fitness_index = selected_index
@@ -206,6 +230,7 @@ class MainWindow(QMainWindow):
         self.standard_model.clear()
         self.generations = []
         self._show_custom_network_seed_tab(config)
+        self.background_thread = None
 
     def fitness_func_args(self):
         if self.options_widget is None:
