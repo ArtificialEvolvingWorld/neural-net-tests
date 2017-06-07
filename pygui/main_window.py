@@ -94,6 +94,8 @@ class MainWindow(QMainWindow):
         self.initialize_rng = init_rng
         self.current_fitness_index = 0
         self.load_fitness_function(fitness_functions[self.current_fitness_index])
+        self.queued_generations = 0
+        self.ui.queued_label.setText(str(self.queued_generations))
 
         self._load_probabilities_from_cpp()
         self._setup_probabilities_callbacks()
@@ -165,9 +167,10 @@ class MainWindow(QMainWindow):
             gen = self.background_thread.get_next_generation()
             if gen is None:
                 break
-
             self.generations.append(gen)
             self.add_to_treeview(gen, len(self.generations)-1)
+            self.queued_generations -= 1
+            self.ui.queued_label.setText(str(self.queued_generations))
             self._hide_custom_network_seed_tab()
 
     def reproduce_in_background(self, n):
@@ -187,13 +190,19 @@ class MainWindow(QMainWindow):
         self.add_to_treeview(gen, len(self.generations)-1)
 
     def advance_one_gen(self):
+        self.queued_generations += 1
+        self.ui.queued_label.setText(str(self.queued_generations))
         self.reproduce_in_background(1)
 
     def advance_ten_gen(self):
+        self.queued_generations += 10
+        self.ui.queued_label.setText(str(self.queued_generations))
         self.reproduce_in_background(10)
 
     def advance_n_gen(self):
         n = self.ui.num_gens.value()
+        self.queued_generations += n
+        self.ui.queued_label.setText(str(self.queued_generations))
         self.reproduce_in_background(n)
 
     def on_select_fitness_func(self, selected_index):
