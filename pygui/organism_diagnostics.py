@@ -35,7 +35,7 @@ class OrganismDiagnostics(QWidget):
 
     def make_plot(self):
         net = self.organism.network
-        g = graph.Graph()
+        self.graph = graph.Graph()
 
         for i,(node_type,func) in enumerate(zip(net.node_types, net.activation_functions)):
             color_table_type = {
@@ -69,17 +69,17 @@ class OrganismDiagnostics(QWidget):
             except:
                 fixed_y = None
 
-            g.add_node(i, color=color)
+            self.graph.add_node(i, color=color)
             if fixed_y is not None:
-                g.fix_y(i, fixed_y)
+                self.graph.fix_y(i, fixed_y)
 
 
         for conn in net.connections:
             boxed = (conn.type == pyneat.ConnectionType.Recurrent)
-            g.add_connection(conn.origin, conn.dest, boxed=boxed)
+            self.graph.add_connection(conn.origin, conn.dest, boxed=boxed)
 
         self.figure.clear()
         axes = self.figure.add_subplot(1,1,1)
-        g.draw(axes)
+        self.graph.draw(axes)
 
         self.canvas.update()
