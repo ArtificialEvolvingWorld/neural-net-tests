@@ -103,6 +103,7 @@ class MainWindow(QMainWindow):
 
         # rig tree view selection model callbacks
         self.ui.tree_view.selectionModel().selectionChanged.connect(self.tree_selection)
+        self._set_up_diagnostics_by_type()
 
     def reset(self):
         self.on_select_fitness_func(self.current_fitness_index)
@@ -126,10 +127,28 @@ class MainWindow(QMainWindow):
             self.ui.fitness_func.addItem(config.name)
         self.ui.fitness_func.currentIndexChanged.connect(self.on_select_fitness_func)
 
+    def _set_up_diagnostics_by_type(self):
+        layout = QtGui.QVBoxLayout(self.ui.info_box)
+        self.ui.info_box.setLayout(layout)
+
+        self.diagnostics_by_type = {}
+        for (obj_type, widget_type) in diagnostic_types.items():
+            widget = widget_type(self)
+            self.diagnostics_by_type[obj_type] = widget
+            layout.addWidget(widget)
+            widget.hide()
+
     def show_diagnostics(self, obj):
         if type(obj) in diagnostic_types:
-            widget_type = diagnostic_types[type(obj)]
-            fill_placeholder(self.ui.info_box, widget_type(obj, self))
+            widget = self.diagnostics_by_type[type(obj)]
+            widget.update(obj)
+
+            for other_widget in self.diagnostics_by_type.values():
+                if other_widget is widget:
+                    other_widget.show()
+                else:
+                    other_widget.hide()
+
 
         if self.diagnostics_widget is not None:
             best_selected = self.get_best_of_selected(obj)

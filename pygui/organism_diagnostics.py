@@ -13,28 +13,36 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir, "graph_displa
 import graph
 
 class OrganismDiagnostics(QWidget):
-    def __init__(self, organism, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Widget()
         self.ui.setupUi(self)
-
-        self.organism = organism
-        self.load_values()
         self.setup_figure()
-        self.make_plot()
+        self.graph = None
 
-    def load_values(self):
-        self.ui.num_nodes.setText(str(self.organism.network.num_nodes))
-        self.ui.num_connections.setText(str(self.organism.network.num_nodes))
-        self.ui.fitness.setText(str(self.organism.fitness))
-        self.ui.adj_fitness.setText(str(self.organism.adj_fitness))
+    def update(self, organism):
+        self.load_values(organism)
+        self.make_plot(organism)
+
+    def load_values(self, organism):
+        self.ui.num_nodes.setText(str(organism.network.num_nodes))
+        self.ui.num_connections.setText(str(organism.network.num_nodes))
+        self.ui.fitness.setText(str(organism.fitness))
+        self.ui.adj_fitness.setText(str(organism.adj_fitness))
 
     def setup_figure(self):
         self.figure = self.ui.matplotlibCanvas.figure
         self.canvas = self.ui.matplotlibCanvas.canvas
 
-    def make_plot(self):
-        net = self.organism.network
+    def stop_graph(self):
+        if self.graph is not None:
+            self.graph.stop()
+            self.graph = None
+
+    def make_plot(self, organism):
+        self.stop_graph()
+
+        net = organism.network
         self.graph = graph.Graph()
 
         for i,(node_type,func) in enumerate(zip(net.node_types, net.activation_functions)):
