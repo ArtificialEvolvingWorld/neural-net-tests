@@ -11,7 +11,7 @@ int main() {
     entity->SetPosition({10,-10,10});
     entity->SetLookAt({0,00,0});
     entity->SetMovementSpeed(20);
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
   {
@@ -31,8 +31,8 @@ int main() {
 
 
     auto entity = std::make_unique<JugglerEntity>(initial);
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
-  viewer.Run();
+  viewer.run();
 }

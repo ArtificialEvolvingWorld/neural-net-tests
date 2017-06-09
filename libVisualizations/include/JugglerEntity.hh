@@ -14,6 +14,8 @@ public:
 
   virtual void initialize(irr::IrrlichtDevice* device);
   virtual void update(double deltaT, const EventReceiver& events);
+
+  irr::core::vector3df get_position() const { return base_position; }
   void set_position(irr::core::vector3df pos);
 
 private:

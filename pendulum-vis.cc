@@ -18,7 +18,7 @@ int main(){
     entity->SetPosition({10,-10,10});
     entity->SetLookAt({0,40,0});
     entity->SetMovementSpeed(20);
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
   for(int i=0; i<101; i++) {
@@ -32,7 +32,7 @@ int main(){
     auto entity = std::make_unique<DoublePendulumEntity>(initial);
     entity->set_position({-10, i*3, 0});
 
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
   for(int i=0; i<101; i++) {
@@ -46,7 +46,7 @@ int main(){
     auto entity = std::make_unique<TwoPendulumEntity>(initial);
     entity->set_position({+10, i*3, 0});
 
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
   for(int i=0; i<101; i++) {
@@ -57,8 +57,8 @@ int main(){
     auto entity = std::make_unique<SinglePendulumEntity>(initial);
     entity->set_position({+30, i*3, 0});
 
-    viewer.AddObject(std::move(entity));
+    viewer.add_object(std::move(entity));
   }
 
-  viewer.Run();
+  viewer.run();
 }

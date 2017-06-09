@@ -40,6 +40,7 @@ void CameraEntity::update(double deltaT, const EventReceiver& events) {
 
   // Re-center the mouse
   device->getCursorControl()->setPosition(0.5f, 0.5f);
+  //disp *= 0.0;
 
   theta += disp.Y * turn_speed * (pi/180);
   theta = std::max(0.0, std::min(theta, pi)); // Clamp to range of 0 to pi

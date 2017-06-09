@@ -14,8 +14,18 @@
 
 VisualTestViewer::VisualTestViewer(int width, int height) {
   receiver = std::make_unique<EventReceiver>();
-  device = createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height), 16,
-                        false, true, false, receiver.get());
+
+  irr::SIrrlichtCreationParameters params;
+  params.DriverType = irr::video::EDT_OPENGL;
+  params.Bits = 16;
+  params.EventReceiver = receiver.get();
+  params.WindowSize = irr::core::dimension2d<irr::u32>(width, height);
+  params.Stencilbuffer = true;
+  //params.WindowId = (void*)33554453;
+
+  // device = createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height), 16,
+  //                       false, true, false, receiver.get());
+  device = createDeviceEx(params);
 
   if(!device) {
     throw std::runtime_error("Could not open irrlicht device");
@@ -53,7 +63,7 @@ void VisualTestViewer::update_fps() {
   fps_text->setText(wstring.c_str());
 }
 
-void VisualTestViewer::Run() {
+void VisualTestViewer::run() {
   auto prev_time = device->getTimer()->getTime();
 
   while(device->run()) {

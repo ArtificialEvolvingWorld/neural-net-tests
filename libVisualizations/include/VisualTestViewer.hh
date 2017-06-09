@@ -28,11 +28,11 @@ public:
   VisualTestViewer(int width, int height);
   ~VisualTestViewer();
 
-  void AddObject(std::unique_ptr<Entity> entity) {
+  void add_object(std::unique_ptr<Entity> entity) {
     entity->initialize(device);
     entities.push_back(std::move(entity));
   }
-  void Run();
+  void run();
 
 private:
   //void initialize_camera();

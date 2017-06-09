@@ -20,6 +20,9 @@ def default_environment():
     The environment that is used to build everything.
     """
     env = Environment(ENV = os.environ)
+    env['CC'] = os.environ.get('CC', env['CC'])
+    env['CXX'] = os.environ.get('CXX', env['CXX'])
+    env['ENV'].update(val for val in os.environ.items() if val[0].startswith('CCC_'))
 
     env['bin_dir'] = Dir('bin')
     env['lib_dir'] = Dir('lib')
@@ -40,11 +43,21 @@ def default_environment():
     if 'NOCOLOR' not in ARGUMENTS:
         ansi_colors(env)
 
+    # OSX errors if there are undefined symbols in a shared library.
+    # This is not desirable, because the symbols could be present in a
+    # different library, or in the main executable.
+    if sys.platform=='darwin' and 'clang' in env['CC']:
+        env.Append(SHLINKFLAGS=['-undefined','dynamic_lookup'])
+
     env.Append(CCFLAGS=['-pthread','-Wall','-Wextra','-pedantic'])
     env.Append(CXXFLAGS=['-std=c++14'])
     env.Append(LINKFLAGS=['-pthread'])
 
-    if 'OPTIMIZE' in ARGUMENTS:
+
+    if 'CODE_COVERAGE' in ARGUMENTS:
+        env.Append(CPPFLAGS=['--coverage'])
+        env.Append(LINKFLAGS=['--coverage'])
+    elif 'OPTIMIZE' in ARGUMENTS:
         env.Append(CCFLAGS=['-O'+ARGUMENTS['OPTIMIZE']])
     else:
         env.Append(CCFLAGS=['-O3'])
@@ -57,6 +70,8 @@ def default_environment():
 
     if 'PYTHON_VERSION' in ARGUMENTS:
         env['PYTHON_VERSION'] = ARGUMENTS['PYTHON_VERSION']
+
+    enable_system_header_support(env)
 
     env.AddMethod(shared_library_dir, 'SharedLibraryDir')
     env.AddMethod(python_library_dir, 'PythonLibraryDir')
@@ -71,6 +86,24 @@ def default_environment():
     env.AddMethod(non_variant_dir, 'NonVariantDir')
 
     return env
+
+def enable_system_header_support(env):
+    '''Add support for system headers
+
+    System headers are useful, because no warnings are issued within
+    them.  Implementation taken from
+    http://scons-users.scons.narkive.com/Dzj1kRym/support-of-the-isystem-option-for-gcc
+    '''
+    # declare and use a new PATH variable for system headers : CPPSYSTEMPATH
+    env['CPPSYSTEMPATH'] = []
+    env['SYSTEMINCPREFIX'] = '-isystem '
+    env['SYSTEMINCSUFFIX'] = ''
+    env['_CPPSYSTEMINCFLAGS'] = '$( ${_concat(SYSTEMINCPREFIX,CPPSYSTEMPATH, SYSTEMINCSUFFIX, __env__, RDirs, TARGET, SOURCE)} $)'
+    env['_CCCOMCOM'] += ' $_CPPSYSTEMINCFLAGS'
+    # add this variable to the C scanner search path
+    env['_CPPPATHS'] = ['$CPPPATH', '$CPPSYSTEMPATH']
+    setattr(SCons.Tool.CScanner, 'path_function',
+    SCons.Scanner.FindPathDirs('_CPPPATHS'))
 
 def ansi_colors(env):
     env['RESET_COLOR'] = '\033[39;49m'
@@ -129,10 +162,17 @@ def shared_library_dir(env, target=None, source=None, is_python_lib=False, depen
     if target is None:
         target = os.path.join(str(source), source.name)
 
+    dependencies_inc_dir = []
+    dependencies_system_inc_dir = []
     if dependencies is not None:
         dependencies = find_libraries(dependencies)
         for dep in dependencies:
             env.Append(**dep.attributes.usage)
+            if 'CPPPATH' in dep.attributes.usage:
+                dependencies_inc_dir.extend(dep.attributes.usage['CPPPATH'])
+            if 'CPPSYSTEMPATH' in dep.attributes.usage:
+                dependencies_system_inc_dir.extend(dep.attributes.usage['CPPSYSTEMPATH'])
+
         if dependencies:
             from_dir = env['pylib_dir'] if is_python_lib else env['lib_dir']
             rel_path = from_dir.rel_path(env['lib_dir'])
@@ -159,7 +199,8 @@ def shared_library_dir(env, target=None, source=None, is_python_lib=False, depen
     shlib_name = shlib.name[len(prefix):-len(suffix)]
 
     shlib.attributes.usage = {
-        'CPPPATH':inc_dir,
+        'CPPPATH':inc_dir + dependencies_inc_dir,
+        'CPPSYSTEMPATH': dependencies_system_inc_dir,
         'LIBPATH':[shlib.dir],
         'LIBS':[shlib_name],
         }
@@ -390,9 +431,9 @@ def irrlicht_lib(env):
     shlib = env.SharedLibrary('Irrlicht', [src_files, all_lib_files])[0]
 
     shlib.attributes.usage = {
-        'CPPPATH': [inc_dir],
+        'CPPSYSTEMPATH': [inc_dir],
         'LIBPATH': shlib.dir,
-        'LIBS': 'Irrlicht',
+        'LIBS': ['Irrlicht'],
         'CPPDEFINES': defines,
         }
     all_libs.append(shlib)

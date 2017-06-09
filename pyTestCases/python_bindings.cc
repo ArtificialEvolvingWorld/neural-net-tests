@@ -1,16 +1,25 @@
+#include <sstream>
+
+#include "DoublePendulum.hh"
+#include "Juggler.hh"
+#include "Regression1D.hh"
+#include "RungeKutta.hh"
 #include "SinglePendulum.hh"
 #include "SinglePendulumFitness.hh"
+#include "TwoPendulum.hh"
 #include "XorFitness.hh"
-#include "RungeKutta.hh"
-#include "Regression1D.hh"
 
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
+#include "pybind11/stl_bind.h"
 
 namespace py = pybind11;
 
-PYBIND11_PLUGIN(TestCases) {
-  py::module m("TestCases", "Description");
+typedef std::vector<GVector<2> > point_list;
+PYBIND11_MAKE_OPAQUE(point_list)
+
+PYBIND11_MODULE(TestCases, m) {
+  m.doc() = "Description";
 
   py::module::import("pyneat");
   typedef std::function<double(NeuralNet&)> FitnessFunc;
@@ -68,5 +77,73 @@ PYBIND11_PLUGIN(TestCases) {
         py::arg("label") = std::vector<float>({0.0,1.1,2.4,3.9,4.2,5.0,6.5})
   );
 
-  return m.ptr();
+  py::class_<DoublePendulum>(m, "DoublePendulum")
+    .def(py::init<>())
+    .def(py::init<const DoublePendulum&>())
+    .def_readwrite("mass_cart", &DoublePendulum::mass_cart)
+    .def_readwrite("mass1", &DoublePendulum::mass1)
+    .def_readwrite("mass2", &DoublePendulum::mass2)
+    .def_readwrite("length1", &DoublePendulum::length1)
+    .def_readwrite("length2", &DoublePendulum::length2)
+    .def_readwrite("g", &DoublePendulum::g)
+    .def_readwrite("Fext", &DoublePendulum::Fext)
+    .def_readwrite("x", &DoublePendulum::x)
+    .def_readwrite("theta1", &DoublePendulum::theta1)
+    .def_readwrite("theta2", &DoublePendulum::theta2)
+    .def_readwrite("v", &DoublePendulum::v)
+    .def_readwrite("omega1", &DoublePendulum::omega1)
+    .def_readwrite("omega2", &DoublePendulum::omega2)
+    ;
+
+  py::class_<TwoPendulum>(m, "TwoPendulum")
+    .def(py::init<>())
+    .def(py::init<const TwoPendulum&>())
+    .def_readwrite("mass_cart", &TwoPendulum::mass_cart)
+    .def_readwrite("mass1", &TwoPendulum::mass1)
+    .def_readwrite("mass2", &TwoPendulum::mass2)
+    .def_readwrite("length1", &TwoPendulum::length1)
+    .def_readwrite("length2", &TwoPendulum::length2)
+    .def_readwrite("g", &TwoPendulum::g)
+    .def_readwrite("Fext", &TwoPendulum::Fext)
+    .def_readwrite("x", &TwoPendulum::x)
+    .def_readwrite("theta1", &TwoPendulum::theta1)
+    .def_readwrite("theta2", &TwoPendulum::theta2)
+    .def_readwrite("v", &TwoPendulum::v)
+    .def_readwrite("omega1", &TwoPendulum::omega1)
+    .def_readwrite("omega2", &TwoPendulum::omega2)
+    ;
+
+  py::class_<Juggler>(m, "Juggler")
+    .def(py::init<size_t, size_t>(),
+         py::arg("num_hands"),
+         py::arg("num_balls"))
+    .def(py::init<const Juggler&>())
+    .def_readwrite("hand_positions", &Juggler::hand_positions)
+    .def_readwrite("ball_positions", &Juggler::ball_positions)
+    .def_readwrite("ball_velocities", &Juggler::ball_velocities)
+    .def_readwrite("hand_size", &Juggler::hand_size)
+    .def("close_hand", &Juggler::close_hand)
+    .def("open_hand", &Juggler::open_hand)
+    ;
+
+  py::bind_vector<point_list>(m, "GVector2_vector");
+
+  py::class_<GVector<2> >(m, "GVector2")
+    .def(py::init<double, double>(),
+         py::arg("x"),
+         py::arg("y"))
+    .def(py::init<const GVector<2>&>())
+    .def_property("x",
+                  [](const GVector<2>& v) { return (double)v.X(); },
+                  [](GVector<2>& v, double x) { v.X() = x; })
+    .def_property("y",
+                  [](const GVector<2>& v) { return (double)v.Y(); },
+                  [](GVector<2>& v, double y) { v.Y() = y; })
+    .def("__repr__",
+         [](const GVector<2>& v) {
+           std::stringstream ss;
+           ss << "GVector2(" << v.X() << ", " << v.Y() << ")";
+           return ss.str();
+         })
+    ;
 }
