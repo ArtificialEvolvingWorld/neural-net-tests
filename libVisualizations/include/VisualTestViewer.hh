@@ -10,6 +10,7 @@ class EventReceiver;
 class PanningCamera;
 namespace irr {
   class IrrlichtDevice;
+  class SIrrlichtCreationParameters;
   namespace scene {
     class ISceneManager;
     class IMeshSceneNode;
@@ -25,6 +26,7 @@ namespace irr {
 
 class VisualTestViewer {
 public:
+  VisualTestViewer(int window_id);
   VisualTestViewer(int width, int height);
   ~VisualTestViewer();
 
@@ -35,6 +37,8 @@ public:
   void run();
 
 private:
+  void setup(irr::SIrrlichtCreationParameters& params);
+
   //void initialize_camera();
   void initialize_objects();
   void update_camera(double dT);

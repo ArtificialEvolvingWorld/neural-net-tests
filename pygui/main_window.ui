@@ -98,10 +98,10 @@ QGroupBox::title {
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
-      <property name="collapsed" stdset="0">
-       <bool>true</bool>
+      <property name="collapsed">
+       <bool>false</bool>
       </property>
       <widget class="QWidget" name="page">
        <attribute name="title">
@@ -538,6 +538,23 @@ QGroupBox::title {
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>temp</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QWidget" name="irrlicht_widget" native="true"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="irrlicht_button">
+          <property name="text">
+           <string>Display Something</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item row="1" column="0">
@@ -606,7 +623,7 @@ QGroupBox::title {
      <x>0</x>
      <y>0</y>
      <width>1120</width>
-     <height>33</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>

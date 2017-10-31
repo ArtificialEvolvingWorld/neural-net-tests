@@ -29,6 +29,9 @@ PYBIND11_MODULE(Visualizations, m) {
   py::module::import("TestCases");
 
   py::class_<VisualTestViewer>(m, "VisualTestViewer")
+    .def(py::init<int>(),
+         py::arg("window_id"),
+         py::doc("Create a visualization in an existing window"))
     .def(py::init<int, int>(),
          py::arg("width"),
          py::arg("height"),

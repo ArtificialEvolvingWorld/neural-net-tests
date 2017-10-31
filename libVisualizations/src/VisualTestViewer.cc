@@ -12,19 +12,30 @@
 #include "PanningCamera.hh"
 #include "ProceduralTexture.hh"
 
+VisualTestViewer::VisualTestViewer(int window_id) {
+  irr::SIrrlichtCreationParameters params;
+  params.WindowId = reinterpret_cast<void*>(window_id);
+  setup(params);
+}
+
 VisualTestViewer::VisualTestViewer(int width, int height) {
+  irr::SIrrlichtCreationParameters params;
+  params.WindowSize = irr::core::dimension2d<irr::u32>(width, height);
+  setup(params);
+}
+
+VisualTestViewer::~VisualTestViewer() {
+  device->drop();
+}
+
+void VisualTestViewer::setup(irr::SIrrlichtCreationParameters& params) {
   receiver = std::make_unique<EventReceiver>();
 
-  irr::SIrrlichtCreationParameters params;
   params.DriverType = irr::video::EDT_OPENGL;
   params.Bits = 16;
   params.EventReceiver = receiver.get();
-  params.WindowSize = irr::core::dimension2d<irr::u32>(width, height);
   params.Stencilbuffer = true;
-  //params.WindowId = (void*)33554453;
 
-  // device = createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height), 16,
-  //                       false, true, false, receiver.get());
   device = createDeviceEx(params);
 
   if(!device) {
@@ -37,10 +48,6 @@ VisualTestViewer::VisualTestViewer(int width, int height) {
   device->setWindowCaption(L"Neural Net Tests");
 
   initialize_objects();
-}
-
-VisualTestViewer::~VisualTestViewer() {
-  device->drop();
 }
 
 void VisualTestViewer::initialize_objects() {
