@@ -8,4 +8,4 @@ env.PythonLibraryDir('pyTestCases',dependencies=['neat','Entendre'])
 
 env.SharedLibraryDir('libVisualizations', dependencies=['irrlicht','TestCases'])
 env.PythonLibraryDir('pyVisualizations')
-env.MainDir('.')
+env.MainDir('.', requires=['eweb', 'websocketpp', 'json'])

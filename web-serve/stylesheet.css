@@ -1,0 +1,30 @@
+.big-box {
+    border-style: solid;
+    border-width: thin;
+    display: inline-block;
+    float: left;
+}
+
+.box-title {
+    font-weight: bold;
+}
+
+#org-browser {
+    clear:left;
+}
+
+#button-1-gen {
+    clear:left;
+}
+
+.graph-box {
+    min-width: 250px;
+}
+
+#network-status {
+    float: right;
+}
+
+.new-column {
+    float: left;
+}

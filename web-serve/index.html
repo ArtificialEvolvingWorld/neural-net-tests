@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <title>Entendre Test Suite</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"></link>
+    <script src="deps/plotly-latest.min.js"></script>
+  </head>
+
+  <body>
+    <div class=new-column>
+      <div id=controls class=big-box>
+        <div class=box-title>Controls</div>
+
+        <select id=dropdown-fitness-function>
+          <option value="xor">xor</option>
+          <option value="single-pendulum-with-velocity">Single Pendulum, With Velocity</option>
+          <option value="single-pendulum-no-velocity">Single Pendulum, No Velocity</option>
+          <option value="1d-regression">1d Regression</option>
+        </select>
+
+        <button id=button-reset>Reset</button>
+
+        <br>
+
+        <button id=button-1-gen>1 Generation</button>
+        <button id=button-10-gen>10 Generations</button>
+
+        <button id=button-n-gen>
+          <input type="number" min="1" max="100" value="25" step="5">
+          Generations
+        </button>
+
+        <br>
+
+        <span id=label-num-queued>0</span> queued.
+
+      </div>
+
+      <div id=org-browser class=big-box>
+        <div class=box-title>Organism Browser</div>
+        <select id=select-generation size="5">
+          <option value="1">Generation 1</option>
+          <option value="2">Generation 2</option>
+          <option value="3">Generation 3</option>
+        </select>
+        <select id=select-species size="5">
+          <option value="1">Species 1</option>
+          <option value="2">Species 2</option>
+          <option value="3">Species 3</option>
+        </select>
+        <select id=select-organism size="5">
+          <option value="1">Organism 1</option>
+          <option value="2">Organism 2</option>
+          <option value="3">Organism 3</option>
+        </select>
+      </div>
+
+
+      <div id=population-stats class=big-box>
+        <div class=box-title>Population Stats</div>
+        <div class=graph-box id=population-stat-box></div>
+      </div>
+
+    </div>
+
+    <div class=new-column>
+
+      <div id=network-status class=big-box>
+        <div class=box-title>Network Status</div>
+
+        <div>
+          <button onclick="connect()">Connect</button>
+          <button onclick="send_message()">Send Message</button>
+        </div>
+
+        <div class=new-column>
+          Messages Sent <br>
+          <textarea id=text-message-sent readonly rows="10" cols="30"></textarea>
+        </div>
+        <div class=new-column>
+          Messages Received <br>
+          <textarea id=text-message-received readonly rows="10" cols="30"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+
+  <script src="make_dummy_plot.js"></script>
+  <script src="entendre.js"></script>
+</html>
