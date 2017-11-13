@@ -21,17 +21,17 @@
 
         <br>
 
-        <button id=button-1-gen>1 Generation</button>
-        <button id=button-10-gen>10 Generations</button>
+        <button id=button-1-gen onclick="queue_generations(1);">1 Generation</button>
+        <button id=button-10-gen onclick="queue_generations(10);">10 Generations</button>
 
-        <button id=button-n-gen>
+        <button id=button-n-gen onclick="queue_n_generations();">
           <input type="number" min="1" max="100" value="25" step="5">
           Generations
         </button>
 
         <br>
 
-        <span id=label-num-queued>0</span> queued.
+        Generation <span id=label-current-gens>0</span>/<span id=label-total-gens>0</span>
 
       </div>
 
@@ -65,11 +65,13 @@
     <div class=new-column>
 
       <div id=network-status class=big-box>
-        <div class=box-title>Network Status</div>
+        <div>
+          <span class=box-title>Network Status:</span>
+          <span id=status-span class=status-amber>unconnected</span>
+        </div>
 
         <div>
-          <button onclick="connect()">Connect</button>
-          <button onclick="send_message()">Send Message</button>
+          <button onclick="reconnect()">Reconnect</button>
         </div>
 
         <div class=new-column>

@@ -28,3 +28,15 @@
 .new-column {
     float: left;
 }
+
+.status-connected {
+    background: greenyellow;
+}
+
+.status-connecting {
+    background: amber;
+}
+
+.status-disconnected {
+    background: red;
+}
