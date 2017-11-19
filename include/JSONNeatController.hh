@@ -37,6 +37,8 @@ public:
 
 private:
   void get_overview(json& j) const;
+  void get_generation_count(json& j) const;
+  json get_generation_info(unsigned int generation_num) const;
   void queue_n_generations(int num_gens);
 
   Population make_population();

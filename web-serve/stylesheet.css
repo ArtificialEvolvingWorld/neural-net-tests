@@ -40,3 +40,7 @@
 .status-disconnected {
     background: red;
 }
+
+.select-gen-spec-org {
+    min-width: 100;
+}

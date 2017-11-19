@@ -15,13 +15,17 @@ ServerResponse JSONNeatController::request(const std::string& command) {
   json output_reply;
   json output_broadcast;
 
-  if(j["action"] == "get_overview") {
-    std::cout << "Sending full program_overview" << std::endl;
+  if(j.count("overview_requested") &&
+     j["overview_requested"]) {
     get_overview(output_reply);
   }
-  if(j["action"] == "advance_n_generations") {
-    int num_gens = j["num_generations"];
+
+
+  if(j.count("advance_n_generations") &&
+     j["advance_n_generations"] > 0) {
+    int num_gens = j["advance_n_generations"];
     queue_n_generations(num_gens);
+    get_generation_count(output_broadcast);
   }
 
   return { output_reply.empty() ? "" : output_reply.dump(),
@@ -41,9 +45,10 @@ std::string JSONNeatController::update_check() {
       all_generations.push_back(std::move(next_gen));
       num_generations_queued--;
 
-      j["info"] = "generation_finished";
-      j["num_queued"] = num_generations_queued;
-      j["num_generations"] = all_generations.size();
+      get_generation_count(j);
+      j["generation_information"].push_back(
+        get_generation_info(all_generations.size()-1)
+      );
     }
   }
 
@@ -51,6 +56,13 @@ std::string JSONNeatController::update_check() {
 }
 
 void JSONNeatController::get_overview(json& j) const {
+  get_generation_count(j);
+  for(unsigned int i=0; i<all_generations.size(); i++) {
+    j["generation_information"].push_back( get_generation_info(i) );
+  }
+}
+
+void JSONNeatController::get_generation_count(json& j) const {
   j["num_queued"] = num_generations_queued;
   j["num_generations"] = all_generations.size();
 }
@@ -69,4 +81,27 @@ void JSONNeatController::queue_n_generations(int num_gens) {
   }
   num_generations_queued += num_gens;
   bg_thread->perform_reproduction(xor_fitness_func(), num_gens);
+}
+
+json JSONNeatController::get_generation_info(unsigned int generation_num) const {
+  Population* gen = (generation_num < all_generations.size() ?
+                     all_generations[generation_num].get() :
+                     nullptr);
+
+  json j;
+  j["index"] = generation_num;
+
+  if(gen) {
+    auto num_species = gen->NumSpecies();
+    j["num_species"] = num_species;
+    auto& species_size_list = j["species_sizes"];
+    for(unsigned int i=0; i<num_species; i++) {
+      species_size_list.push_back(gen->SpeciesSize(i));
+    }
+  } else {
+    j["num_species"] = 0;
+    j["species_sizes"] = json::array();
+  }
+
+  return j;
 }

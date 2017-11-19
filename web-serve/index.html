@@ -37,20 +37,16 @@
 
       <div id=org-browser class=big-box>
         <div class=box-title>Organism Browser</div>
-        <select id=select-generation size="5">
-          <option value="1">Generation 1</option>
-          <option value="2">Generation 2</option>
-          <option value="3">Generation 3</option>
+        <select class=select-gen-spec-org id=select-generation
+                size="5"
+                onchange="on_generation_select()">
         </select>
-        <select id=select-species size="5">
-          <option value="1">Species 1</option>
-          <option value="2">Species 2</option>
-          <option value="3">Species 3</option>
+        <select class=select-gen-spec-org id=select-species
+                size="5"
+                onchange="on_species_select()">
         </select>
-        <select id=select-organism size="5">
-          <option value="1">Organism 1</option>
-          <option value="2">Organism 2</option>
-          <option value="3">Organism 3</option>
+        <select class=select-gen-spec-org id=select-organism
+                size="5">
         </select>
       </div>
 

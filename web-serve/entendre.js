@@ -2,6 +2,8 @@ var connection = null;
 var message_sent_box = document.getElementById("text-message-sent");
 var message_received_box = document.getElementById("text-message-received");
 
+var all_generation_info = {};
+
 function connect() {
     connection = new WebSocket("ws://" + location.hostname + ":11223");
     connection.onopen = on_websocket_open;
@@ -54,25 +56,82 @@ function on_receive_message(event) {
 
     var parsed = JSON.parse(message);
     if(parsed.hasOwnProperty('authenticated')) {
-        send_message({"action": "get_overview"});
+        send_message({"overview_requested": true});
 
-    } else if(parsed.hasOwnProperty('num_queued') &&
-              parsed.hasOwnProperty('num_generations')) {
+    }
+
+    if(parsed.hasOwnProperty('num_queued') &&
+       parsed.hasOwnProperty('num_generations')) {
         document.getElementById('label-current-gens').innerHTML = parsed['num_generations'];
         document.getElementById('label-total-gens').innerHTML = parsed['num_queued'] + parsed['num_generations'];
+    }
+
+    if(parsed.hasOwnProperty('generation_information')) {
+        display_new_generations(parsed['generation_information']);
     }
 }
 
 function queue_generations(num_gens) {
-    send_message({"action": "advance_n_generations",
-                  "num_generations": num_gens,
-                 });
+    send_message({"advance_n_generations": num_gens});
 }
 
 function queue_n_generations() {
     var input_spinner = document.getElementById('button-n-gen').querySelector('input');
     var num_gens = parseInt(input_spinner.value);
     queue_generations(num_gens);
+}
+
+function display_new_generations(generations) {
+    var generation_box = document.getElementById('select-generation');
+
+    var new_items = "";
+    for(var i = 0; i<generations.length; i += 1) {
+        var gen = generations[i];
+        var item = ('<option value="' + gen["index"] + '">' +
+                    'Generation ' + gen["index"] + '</option>');
+        new_items += item;
+        all_generation_info[gen["index"]] = gen;
+    }
+    generation_box.innerHTML += new_items;
+}
+
+function on_generation_select() {
+    var generation_box = document.getElementById('select-generation');
+    var gen_index = generation_box.options[generation_box.selectedIndex].value;
+    var gen_info = all_generation_info[gen_index];
+
+    var species_box = document.getElementById('select-species');
+
+    species_box.innerHTML = "";
+
+    var listing = "";
+    var num_species = gen_info["species_sizes"].length;
+    for(var spec_num=0; spec_num<num_species; spec_num += 1) {
+        var item = ('<option value="' + spec_num + '">' +
+                       'Species ' + spec_num + '</option>');
+        listing += item;
+    }
+    species_box.innerHTML = listing;
+}
+
+function on_species_select() {
+    var generation_box = document.getElementById('select-generation');
+    var gen_index = generation_box.options[generation_box.selectedIndex].value;
+    var gen_info = all_generation_info[gen_index];
+
+    var species_box = document.getElementById('select-species');
+    var species_index = species_box.options[species_box.selectedIndex].value;
+
+    var org_box = document.getElementById('select-organism');
+
+    var listing = "";
+    var num_organisms = gen_info["species_sizes"][species_index]
+    for(var org_num=0; org_num<num_organisms; org_num += 1) {
+        var item = ('<option value="' + org_num + '">' +
+                    'Organism ' + org_num + '</option>');
+        listing += item;
+    }
+    org_box.innerHTML = listing;
 }
 
 display_websocket_state('disconnected');

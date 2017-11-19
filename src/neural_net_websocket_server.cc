@@ -1,6 +1,7 @@
 #include "neural_net_websocket_server.hh"
 
 #include <algorithm>
+#include <iostream>
 
 #include "json.hpp"
 using nlohmann::json;
@@ -27,10 +28,7 @@ neural_net_websocket_server::~neural_net_websocket_server() {
   server.stop_listening();
   for(auto& handle : live_connections) {
     websocketpp::lib::error_code ec;
-    auto conn = server.get_con_from_hdl(handle, ec);
-    if(conn) {
-      conn->close(websocketpp::close::status::going_away, "");
-    }
+    server.close(handle, websocketpp::close::status::going_away, "", ec);
   }
   stop_periodic_check = true;
   thread.join();
