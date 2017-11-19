@@ -112,7 +112,15 @@ function on_generation_select() {
         listing += item;
     }
     species_box.innerHTML = listing;
+    species_box.selectedIndex = 0;
 }
+
+function on_generation_keydown(event) {
+    if(event.key === 'ArrowRight') {
+        document.getElementById('select-species').focus();
+    }
+}
+document.getElementById('select-generation').addEventListener('keydown',on_generation_keydown);
 
 function on_species_select() {
     var generation_box = document.getElementById('select-generation');
@@ -132,7 +140,24 @@ function on_species_select() {
         listing += item;
     }
     org_box.innerHTML = listing;
+    org_box.selectedIndex = 0;
 }
+
+function on_species_keydown(event) {
+    if(event.key === 'ArrowLeft') {
+        document.getElementById('select-generation').focus();
+    } else if(event.key === 'ArrowRight') {
+        document.getElementById('select-organism').focus();
+    }
+}
+document.getElementById('select-species').addEventListener('keydown',on_species_keydown);
+
+function on_organism_keydown(event) {
+    if(event.key === 'ArrowLeft') {
+        document.getElementById('select-species').focus();
+    }
+}
+document.getElementById('select-organism').addEventListener('keydown',on_organism_keydown);
 
 display_websocket_state('disconnected');
 window.setTimeout(connect, 0);
