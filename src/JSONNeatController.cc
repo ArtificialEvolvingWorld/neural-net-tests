@@ -84,23 +84,34 @@ void JSONNeatController::queue_n_generations(int num_gens) {
 }
 
 json JSONNeatController::get_generation_info(unsigned int generation_num) const {
-  Population* gen = (generation_num < all_generations.size() ?
-                     all_generations[generation_num].get() :
-                     nullptr);
-
   json j;
   j["index"] = generation_num;
 
-  if(gen) {
-    auto num_species = gen->NumSpecies();
-    j["num_species"] = num_species;
-    auto& species_size_list = j["species_sizes"];
-    for(unsigned int i=0; i<num_species; i++) {
-      species_size_list.push_back(gen->SpeciesSize(i));
+  if(generation_num >= all_generations.size()) {
+    return j;
+  }
+
+  Population* gen = all_generations[generation_num].get();
+
+  j["species"] = json::array();
+  for(auto& species : gen->GetSpecies()) {
+    json species_info;
+
+    species_info["id"] = species.id;
+    species_info["age"] = species.age;
+    species_info["organisms"] = json::array();
+    unsigned int org_index = 0;
+    for(auto& org : species.organisms) {
+      json organism_info;
+
+      organism_info["index"] = org_index;
+      organism_info["fitness"] = org.fitness;
+
+      org_index++;
+      species_info["organisms"].push_back(organism_info);
     }
-  } else {
-    j["num_species"] = 0;
-    j["species_sizes"] = json::array();
+
+    j["species"].push_back(species_info);
   }
 
   return j;

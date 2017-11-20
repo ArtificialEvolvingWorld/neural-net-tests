@@ -107,10 +107,10 @@ function display_new_generations(generations) {
     var new_items = "";
     for(var i = 0; i<generations.length; i += 1) {
         var gen = generations[i];
-        var item = ('<option value="' + gen["index"] + '">' +
-                    'Generation ' + gen["index"] + '</option>');
+        var item = ('<option value="' + gen.index + '">' +
+                    'Generation ' + gen.index + '</option>');
         new_items += item;
-        all_generation_info[gen["index"]] = gen;
+        all_generation_info[gen.index] = gen;
     }
     generation_box.innerHTML += new_items;
 }
@@ -125,7 +125,7 @@ function on_generation_select() {
     species_box.innerHTML = "";
 
     var listing = "";
-    var num_species = gen_info["species_sizes"].length;
+    var num_species = gen_info.species.length;
     for(var spec_num=0; spec_num<num_species; spec_num += 1) {
         var item = ('<option value="' + spec_num + '">' +
                        'Species ' + spec_num + '</option>');
@@ -133,6 +133,39 @@ function on_generation_select() {
     }
     species_box.innerHTML = listing;
     species_box.selectedIndex = 0;
+
+    plot_generation_fitness(gen_info);
+}
+
+function plot_generation_fitness(gen_info) {
+    var fitnesses = []
+    for(var spec_num=0; spec_num<gen_info.species.length; spec_num += 1) {
+        var species = gen_info.species[spec_num];
+        for(var org_num=0; org_num<species.organisms.length; org_num += 1) {
+            fitnesses.push(species.organisms[org_num].fitness);
+        }
+    }
+
+    var title = 'Gen. ' + gen_info.index + ' Fitness';
+
+    var plot_data = { x: fitnesses,
+                      type: 'histogram',
+                      name: title
+                    };
+
+    var layout = { margin: { t: 40 },
+                   title: title,
+                   yaxis: {
+                       title: 'Counts',
+                       //range: [display_min, display_max]
+                   },
+                   showlegend: false };
+
+    var options = { showLink: false,
+                    staticPlot: false,
+                    displayModeBar: false };
+
+    Plotly.newPlot('population-stat-box', [plot_data], layout, options);
 }
 
 function on_generation_keydown(event) {
@@ -149,11 +182,12 @@ function on_species_select() {
 
     var species_box = document.getElementById('select-species');
     var species_index = species_box.options[species_box.selectedIndex].value;
+    var spec_info = gen_info.species[species_index]
 
     var org_box = document.getElementById('select-organism');
 
     var listing = "";
-    var num_organisms = gen_info["species_sizes"][species_index]
+    var num_organisms = spec_info.organisms.length;
     for(var org_num=0; org_num<num_organisms; org_num += 1) {
         var item = ('<option value="' + org_num + '">' +
                     'Organism ' + org_num + '</option>');
@@ -161,6 +195,37 @@ function on_species_select() {
     }
     org_box.innerHTML = listing;
     org_box.selectedIndex = 0;
+
+    plot_species_fitness(gen_info, spec_info);
+}
+
+function plot_species_fitness(gen_info, spec_info) {
+    var fitnesses = []
+    for(var org_num=0; org_num<spec_info.organisms.length; org_num += 1) {
+        fitnesses.push(spec_info.organisms[org_num].fitness);
+    }
+
+    var title = ('Gen. ' + gen_info.index + ', ' +
+                 'Spec. ' + spec_info.id + ' Fitness');
+
+    var plot_data = { x: fitnesses,
+                      type: 'histogram',
+                      name: title
+                    };
+
+    var layout = { margin: { t: 40 },
+                   title: title,
+                   yaxis: {
+                       title: 'Counts',
+                       //range: [display_min, display_max]
+                   },
+                   showlegend: false };
+
+    var options = { showLink: false,
+                    staticPlot: false,
+                    displayModeBar: false };
+
+    Plotly.newPlot('population-stat-box', [plot_data], layout, options);
 }
 
 function on_species_keydown(event) {
