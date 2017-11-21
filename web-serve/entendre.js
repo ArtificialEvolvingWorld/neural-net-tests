@@ -5,6 +5,9 @@ var total_bytes_sent = 0;
 var total_bytes_received = 0;
 
 var all_generation_info = {};
+var active_network = {generation_num: -1,
+                      species_num: -1,
+                      organism_num: -1};
 
 function connect() {
     connection = new WebSocket("ws://" + location.hostname + ":11223");
@@ -77,6 +80,10 @@ function on_receive_message(event) {
     if(parsed.hasOwnProperty('generation_information')) {
         display_new_generations(parsed['generation_information']);
     }
+
+    if(parsed.hasOwnProperty('network_details')) {
+        display_network(parsed['network_details']);
+    }
 }
 
 function format_bytes(bytes) {
@@ -115,10 +122,29 @@ function display_new_generations(generations) {
     generation_box.innerHTML += new_items;
 }
 
-function on_generation_select() {
+function get_selected_generation() {
     var generation_box = document.getElementById('select-generation');
     var gen_index = generation_box.options[generation_box.selectedIndex].value;
-    var gen_info = all_generation_info[gen_index];
+    return all_generation_info[gen_index];
+}
+
+function get_selected_species() {
+    var gen_info = get_selected_generation();
+
+    var species_box = document.getElementById('select-species');
+    var species_index = species_box.options[species_box.selectedIndex].value;
+    return gen_info.species[species_index];
+}
+
+function on_generation_select() {
+    display_selected_generation();
+    display_selected_species();
+    var gen_info = get_selected_generation();
+    plot_generation_fitness(gen_info);
+}
+
+function display_selected_generation() {
+    var gen_info = get_selected_generation();
 
     var species_box = document.getElementById('select-species');
 
@@ -133,8 +159,6 @@ function on_generation_select() {
     }
     species_box.innerHTML = listing;
     species_box.selectedIndex = 0;
-
-    plot_generation_fitness(gen_info);
 }
 
 function plot_generation_fitness(gen_info) {
@@ -176,13 +200,16 @@ function on_generation_keydown(event) {
 document.getElementById('select-generation').addEventListener('keydown',on_generation_keydown);
 
 function on_species_select() {
-    var generation_box = document.getElementById('select-generation');
-    var gen_index = generation_box.options[generation_box.selectedIndex].value;
-    var gen_info = all_generation_info[gen_index];
+    display_selected_species();
 
-    var species_box = document.getElementById('select-species');
-    var species_index = species_box.options[species_box.selectedIndex].value;
-    var spec_info = gen_info.species[species_index]
+    var gen_info = get_selected_generation();
+    var spec_info = get_selected_species();
+    plot_species_fitness(gen_info, spec_info);
+}
+
+function display_selected_species() {
+    var gen_info = get_selected_generation();
+    var spec_info = get_selected_species();
 
     var org_box = document.getElementById('select-organism');
 
@@ -195,8 +222,6 @@ function on_species_select() {
     }
     org_box.innerHTML = listing;
     org_box.selectedIndex = 0;
-
-    plot_species_fitness(gen_info, spec_info);
 }
 
 function plot_species_fitness(gen_info, spec_info) {
@@ -237,12 +262,74 @@ function on_species_keydown(event) {
 }
 document.getElementById('select-species').addEventListener('keydown',on_species_keydown);
 
+function on_organism_select() {
+    var gen_info = get_selected_generation();
+    var spec_info = get_selected_species();
+
+    var org_box = document.getElementById('select-organism');
+    var org_index = org_box.options[org_box.selectedIndex].value;
+    org_index = parseInt(org_index);
+
+    active_network.generation_num = gen_info.index;
+    active_network.species_num = spec_info.index;
+    active_network.organism_num = org_index;
+    send_message({network_details_requested: active_network});
+}
+
 function on_organism_keydown(event) {
     if(event.key === 'ArrowLeft') {
         document.getElementById('select-species').focus();
     }
 }
 document.getElementById('select-organism').addEventListener('keydown',on_organism_keydown);
+
+function display_network(details) {
+    if(details.generation_num != active_network.generation_num ||
+       details.species_num != active_network.species_num ||
+       details.organism_num != active_network.organism_num) {
+        return;
+    }
+
+    var nodes = [];
+    var i_input = 0;
+    var i_output = 0;
+    var i_hidden = 0;
+    for(var i=0; i<details.nodes.length; i += 1) {
+        var type = details.nodes[i].type;
+        var label = 'Unknown';
+        if(type == 'Input') {
+            label = 'Input ' + i_input;
+            i_input += 1;
+        } else if(type == 'Output') {
+            label = 'Output ' + i_output;
+            i_output += 1;
+        } else if(type == 'Bias') {
+            label = 'Bias';
+        } else if(type == 'Hidden') {
+            label = 'Hidden ' + i_hidden;
+            i_hidden += 1;
+        }
+        nodes.push({id: i,
+                    label: label});
+    }
+    nodes = new vis.DataSet(nodes);
+
+    var edges = [];
+    for(var i=0; i<details.connections.length; i += 1) {
+        var conn = details.connections[i];
+        edges.push({from: conn.origin,
+                    to: conn.dest,
+                    arrows: 'to',
+                   });
+    }
+    edges = new vis.DataSet(edges);
+
+    var container = document.getElementById("network-display-box");
+    var data = {nodes: nodes,
+                edges: edges};
+    var options = {height: 400};
+    new vis.Network(container, data, options);
+}
 
 display_websocket_state('disconnected');
 window.setTimeout(connect, 0);

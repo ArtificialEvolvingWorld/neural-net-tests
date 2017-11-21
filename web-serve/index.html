@@ -3,10 +3,35 @@
     <title>Entendre Test Suite</title>
     <link rel="stylesheet" type="text/css" href="stylesheet.css"></link>
     <script src="deps/plotly-latest.min.js"></script>
+    <script src="deps/vis.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="deps/vis.min.css"></link>
   </head>
 
   <body>
     <div class=new-column>
+      <div id=network-status class=big-box>
+        <div>
+          <span class=box-title>Network Status:</span>
+          <span id=status-span class=status-amber>unconnected</span>
+        </div>
+
+        <div>
+          <button onclick="reconnect()">Reconnect</button>
+        </div>
+
+        <div class=new-column>
+          Messages Sent <br>
+          Total: <span id=total-bytes-sent>0 bytes</span><br>
+          <textarea id=text-message-sent readonly rows="10" cols="30"></textarea>
+        </div>
+        <div class=new-column>
+          Messages Received <br>
+          Total: <span id=total-bytes-received>0 bytes</span><br>
+          <textarea id=text-message-received readonly rows="10" cols="30"></textarea>
+        </div>
+      </div>
+
+
       <div id=controls class=big-box>
         <div class=box-title>Controls</div>
 
@@ -46,7 +71,8 @@
                 onchange="on_species_select()">
         </select>
         <select class=select-gen-spec-org id=select-organism
-                size="5">
+                size="5"
+                onchange="on_organism_select()">
         </select>
       </div>
 
@@ -55,32 +81,11 @@
         <div class=box-title>Population Stats</div>
         <div class=graph-box id=population-stat-box></div>
       </div>
-
-    </div>
-
-    <div class=new-column>
-
-      <div id=network-status class=big-box>
-        <div>
-          <span class=box-title>Network Status:</span>
-          <span id=status-span class=status-amber>unconnected</span>
-        </div>
-
-        <div>
-          <button onclick="reconnect()">Reconnect</button>
-        </div>
-
-        <div class=new-column>
-          Messages Sent <br>
-          Total: <span id=total-bytes-sent>0 bytes</span><br>
-          <textarea id=text-message-sent readonly rows="10" cols="30"></textarea>
-        </div>
-        <div class=new-column>
-          Messages Received <br>
-          Total: <span id=total-bytes-received>0 bytes</span><br>
-          <textarea id=text-message-received readonly rows="10" cols="30"></textarea>
-        </div>
+      <div id=network-display class=big-box>
+        <div class=box-title>Network Display</div>
+        <div class=graph-box id=network-display-box></div>
       </div>
+
 
     </div>
 

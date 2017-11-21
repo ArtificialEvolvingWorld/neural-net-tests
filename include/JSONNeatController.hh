@@ -36,9 +36,16 @@ public:
   std::string update_check();
 
 private:
+  ServerResponse request_maythrow(const std::string& command);
+
   void get_overview(json& j) const;
   void get_generation_count(json& j) const;
   json get_generation_info(unsigned int generation_num) const;
+  json get_network_info(unsigned int generation_num,
+                        unsigned int species_num,
+                        unsigned int organism_num) const;
+
+
   void queue_n_generations(int num_gens);
 
   Population make_population();
