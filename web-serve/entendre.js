@@ -290,12 +290,31 @@ function display_network(details) {
         return;
     }
 
+    type_color_table = {
+        Input: '#6174DD',
+        Bias: '#1FC291',
+        Output: '#FF5748',
+    };
+
+    func_color_table = {
+        Identity: '#68C6D3',
+        Sigmoid: '#EE8A2A',
+        Tanh: '#B17516',
+        Relu: '#B1B0AA',
+        Gaussian: '#2CB11F',
+        Sin: '#F6DE39',
+        Cos: '#C5B12C',
+        Abs: '#E685E7',
+        Square: '#F050E6',
+    };
+
     var nodes = [];
     var i_input = 0;
     var i_output = 0;
     var i_hidden = 0;
     for(var i=0; i<details.nodes.length; i += 1) {
         var type = details.nodes[i].type;
+        var func = details.nodes[i].func;
         var label = 'Unknown';
         if(type == 'Input') {
             label = 'Input ' + i_input;
@@ -309,8 +328,16 @@ function display_network(details) {
             label = 'Hidden ' + i_hidden;
             i_hidden += 1;
         }
+
+        var color = (type_color_table.hasOwnProperty(type) ? type_color_table[type] :
+                     func_color_table.hasOwnProperty(func) ? func_color_table[func] :
+                     'Blue');
+        console.log(color);
+
         nodes.push({id: i,
-                    label: label});
+                    label: label,
+                    color: color,
+                   });
     }
     nodes = new vis.DataSet(nodes);
 
@@ -320,6 +347,9 @@ function display_network(details) {
         edges.push({from: conn.origin,
                     to: conn.dest,
                     arrows: 'to',
+                    value: Math.abs(conn.weight),
+                    dashes: conn.type == 'Recurrent',
+                    color: {color: '#6174DD'},
                    });
     }
     edges = new vis.DataSet(edges);
@@ -327,7 +357,10 @@ function display_network(details) {
     var container = document.getElementById("network-display-box");
     var data = {nodes: nodes,
                 edges: edges};
-    var options = {height: 400};
+    var options = {height: "400",
+                   edges: {scaling: {min: 1,
+                                     max: 6}},
+                  };
     new vis.Network(container, data, options);
 }
 
