@@ -84,6 +84,31 @@ function on_receive_message(event) {
     if(parsed.hasOwnProperty('network_details')) {
         display_network(parsed['network_details']);
     }
+
+    if(parsed.hasOwnProperty('reset')) {
+        do_reset();
+    }
+}
+
+function send_reset_request() {
+    send_message({reset: true});
+}
+
+function do_reset() {
+    document.getElementById('label-current-gens').innerHTML = 0;
+    document.getElementById('label-total-gens').innerHTML = 0;
+
+    var generation_box = document.getElementById('select-generation');
+    generation_box.innerHTML = "";
+    var species_box = document.getElementById('select-species');
+    species_box.innerHTML = "";
+    var organism_box = document.getElementById('select-organism');
+    organism_box.innerHTML = "";
+
+    all_generation_info = {};
+    active_network = {generation_num: -1,
+                      species_num: -1,
+                      organism_num: -1};
 }
 
 function format_bytes(bytes) {

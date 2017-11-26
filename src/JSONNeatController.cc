@@ -31,7 +31,6 @@ ServerResponse JSONNeatController::request_maythrow(const std::string& command) 
     get_overview(output_reply);
   }
 
-
   if(j.count("advance_n_generations") &&
      j["advance_n_generations"] > 0) {
     int num_gens = j["advance_n_generations"];
@@ -46,6 +45,12 @@ ServerResponse JSONNeatController::request_maythrow(const std::string& command) 
     unsigned int organism_num = req["organism_num"];
     output_reply["network_details"] = get_network_info(
       generation_num, species_num, organism_num);
+  }
+
+  if(j.count("reset") &&
+     j["reset"]) {
+    reset();
+    output_broadcast["reset"] = true;
   }
 
   return { output_reply.empty() ? "" : output_reply.dump(),
@@ -92,6 +97,12 @@ Population JSONNeatController::make_population() {
   return Population(seed,
                     std::make_shared<RNG_MersenneTwister>(),
                     std::make_shared<Probabilities>());
+}
+
+void JSONNeatController::reset() {
+  all_generations.clear();
+  bg_thread = nullptr;
+  num_generations_queued = 0;
 }
 
 void JSONNeatController::queue_n_generations(int num_gens) {

@@ -46,6 +46,7 @@ private:
                         unsigned int organism_num) const;
 
 
+  void reset();
   void queue_n_generations(int num_gens);
 
   Population make_population();
