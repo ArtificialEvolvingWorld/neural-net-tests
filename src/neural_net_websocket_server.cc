@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 using nlohmann::json;
 
 neural_net_websocket_server::neural_net_websocket_server(int port)

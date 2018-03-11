@@ -8,7 +8,7 @@
 #include "Population.hh"
 #include "PopulationBackgroundThread.hh"
 
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 using nlohmann::json;
 
 struct ServerResponse {
